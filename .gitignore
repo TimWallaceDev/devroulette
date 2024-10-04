@@ -1,0 +1,4 @@
+client/node_modules
+backend/node_modules
+backend/cert.pem
+backend/key.pem
