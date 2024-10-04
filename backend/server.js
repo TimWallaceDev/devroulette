@@ -1,5 +1,6 @@
 // server.js
 const { PeerServer } = require('peer');
+const { express } = require('express');
 
 const peerServer = PeerServer({
     port: 9000,   // Server will run on port 9000
@@ -24,7 +25,6 @@ peerServer.on("error", (error) => {
 
 console.log("Peer server listening on port 9000")
 
-import express from 'express'
 const app = express()
 const PORT = process.env.PORT || 9001
 
