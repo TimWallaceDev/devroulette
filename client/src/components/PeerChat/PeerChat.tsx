@@ -49,6 +49,7 @@ const PeerChat = () => {
                 console.log('My peer ID is:', id);
                 //send peer id to the pair API
                 const check = checkPairServer(id)
+                console.log({check})
 
                 //if partner, call them
 
