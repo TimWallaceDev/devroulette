@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
+import axios from "axios"
 
 const PeerChat = () => {
     const [peerId, setPeerId] = useState('');
@@ -7,7 +8,6 @@ const PeerChat = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const [connection, setConnection] = useState<DataConnection | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null)
-    // const [remoteStream, setRemoteStream] = useState<MediaConnection | null>(null)
 
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
@@ -16,7 +16,6 @@ const PeerChat = () => {
         async function getMedia() {
             try {
                 const videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                console.log("my media stream: ", videoStream)
                 setStream(videoStream)
 
                 //start the local video 
@@ -32,20 +31,28 @@ const PeerChat = () => {
     }, []);
 
     useEffect(() => {
-
-
         function setupCall() {
             console.log("setting up call")
-            console.log(stream)
             const newPeer = new Peer({
                 host: 'devroulette.com',
                 path: '/myapp',
                 secure: true
             }); // Create a new Peer instance
 
+            async function checkPairServer(peerId: string){
+                const response = await axios.post("https://devroulette.com/pair", {peerId: peerId})
+                return response.data
+            }
+
             newPeer.on('open', (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
                 console.log('My peer ID is:', id);
+                //send peer id to the pair API
+                const check = checkPairServer(id)
+
+                //if partner, call them
+
+                //otherwise wait
             });
 
             // Handle incoming connections
@@ -59,18 +66,16 @@ const PeerChat = () => {
             newPeer.on('call', (call: MediaConnection) => {
                 console.log("----------- call incoming! - ------------")
                 if (stream) {
-                    console.log("---------- answering with my stream---------------")
                     call.answer(stream); // Answer the call with your media stream (if you want to send your stream)
                 }
                 else {
                     console.log("---------- no stream yet to reply with-----------------")
                 }
+
                 call.on('stream', (remoteStream) => {
                     // Properly set the remote stream for the video element
-                    console.log("-------- stream recieved: =>: ", remoteStream)
                     if (remoteVideoRef.current) {
                         if (remoteVideoRef.current.srcObject) {
-
                             remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
                         }
                     }
@@ -115,13 +120,11 @@ const PeerChat = () => {
         if (stream) {
             const call = peer.call(peerId, stream);
             call.on('stream', (remoteStream) => {
-                console.log("--------- answer in form of stream ----------------")
                 if (remoteVideoRef.current) {
                     remoteVideoRef.current.srcObject = remoteStream; // Set remote video source
                 }
             });
         }
-
     };
 
     return (

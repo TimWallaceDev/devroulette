@@ -1,0 +1,13 @@
+Create and ERD 
+Create a home page
+Find a code editor to use
+Figure out how to automatically match people up. There will need to be a backend that takes care of this. I think there will be two endpoints. Join a room, Make a room. 
+
+If there are too many people making rooms, there is no issue. There will simply be an abundant amount of rooms for users to switch between. 
+
+If there are too many people joining rooms, there is also no issue. We can simply pair them up. 
+
+it could be like hot potato. When you leave, you toss the potato. The other person will be left with the code. I like that. 
+
+Will likely need moderation in some way? Figure that out later for sure. 
+

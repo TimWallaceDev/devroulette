@@ -22,4 +22,29 @@ peerServer.on("error", (error) => {
     console.log("error has occured: ", error)
 })
 
-console.log("server listening on port 9000")
+console.log("Peer server listening on port 9000")
+
+import express from 'express'
+const app = express()
+const PORT = process.env.PORT || 9001
+
+app.use(express.json())
+
+const queue = []
+
+app.get("/join", (req, res) => {
+    //get the Peer id
+    const peerId = ""
+    if (queue.length === 0 ){
+        queue.push(peerId)
+        res.status(202).json({message: "You're first in line"})
+    }
+    else {
+        const pair = queue.pop()
+        res.status(200).json({message: "You've been matched", pairId: pair})
+    }
+})
+
+app.listen(PORT, () => {
+    console.log("Pairing server is running on http://localhost:", PORT)
+})
