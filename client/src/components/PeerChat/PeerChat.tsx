@@ -38,8 +38,7 @@ const PeerChat = () => {
             console.log("setting up call")
             console.log(stream)
             const newPeer = new Peer({
-                host: '192.168.0.20',
-                port: 9000,
+                host: 'devroulette.com',
                 path: '/myapp',
                 secure: true
             }); // Create a new Peer instance
