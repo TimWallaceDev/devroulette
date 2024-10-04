@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 
 const PeerChat = () => {
@@ -7,10 +7,10 @@ const PeerChat = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const [connection, setConnection] = useState<DataConnection | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null)
-    const [remoteStream, setRemoteStream] = useState<MediaConnection | null>(null)
+    // const [remoteStream, setRemoteStream] = useState<MediaConnection | null>(null)
 
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
-    const remoteVideoRef = useRef(null); // Reference for the remote video element
+    const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
     useEffect(() => {
         async function getMedia() {
@@ -21,9 +21,7 @@ const PeerChat = () => {
 
                 //start the local video 
                 if (localVideoRef.current) {
-                    if (localVideoRef.current) {
-                        localVideoRef.current.srcObject = videoStream
-                    }
+                    localVideoRef.current.srcObject = videoStream
                 }
             } catch (err) {
                 console.error("Error accessing media devices:", err);
@@ -72,7 +70,10 @@ const PeerChat = () => {
                     // Properly set the remote stream for the video element
                     console.log("-------- stream recieved: =>: ", remoteStream)
                     if (remoteVideoRef.current) {
-                        remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
+                        if (remoteVideoRef.current.srcObject) {
+
+                            remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
+                        }
                     }
                 });
             });
@@ -117,7 +118,7 @@ const PeerChat = () => {
             call.on('stream', (remoteStream) => {
                 console.log("--------- answer in form of stream ----------------")
                 if (remoteVideoRef.current) {
-                    remoteVideoRef.current.src = remoteStream; // Set remote video source
+                    remoteVideoRef.current.srcObject = remoteStream; // Set remote video source
                 }
             });
         }
@@ -131,10 +132,11 @@ const PeerChat = () => {
                 <input
                     type="text"
                     placeholder="Connect to peer ID"
-                    onKeyDown={(e) => {
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === 'Enter') {
-                            connectToPeer(e.target.value);
-                            e.target.value = ''; // Clear the input
+                            const target = e.target as HTMLInputElement
+                            connectToPeer(target.value);
+                            target.value = ''; // Clear the input
                         }
                     }}
                 />
@@ -151,10 +153,11 @@ const PeerChat = () => {
                 <input
                     type="text"
                     placeholder="Type a message"
-                    onKeyDown={(e) => {
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === 'Enter') {
-                            sendMessage(e.target.value);
-                            e.target.value = ''; // Clear the input
+                            const target = e.target as HTMLInputElement
+                            sendMessage(target.value);
+                            target.value = ''; // Clear the input
                         }
                     }}
                 />
@@ -164,10 +167,11 @@ const PeerChat = () => {
             <input
                 type="text"
                 placeholder="video to peer ID"
-                onKeyDown={(e) => {
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') {
-                        callPeer(e.target.value);
-                        e.target.value = ''; // Clear the input
+                        const target = e.target as HTMLInputElement
+                        callPeer(target.value);
+                        target.value = ''; // Clear the input
                     }
                 }}
             />

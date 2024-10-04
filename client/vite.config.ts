@@ -17,5 +17,6 @@ export default defineConfig({
       protocol: 'wss',
       host: '192.168.0.20' // replace with your local IP or localhost
     }
-  }
+  },
+  
 })
