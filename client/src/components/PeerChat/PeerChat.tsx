@@ -21,9 +21,9 @@ const PeerChat = (props: PeerChatProps) => {
 
     const code = props.code
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log("code has been updated. sending it to the homie")
-        if (dataConn){
+        if (dataConn) {
             dataConn.send(code)
         }
     }, [code])
@@ -76,36 +76,33 @@ const PeerChat = (props: PeerChatProps) => {
                 else {
                     console.log("---------- no stream yet to reply with-----------------")
                 }
-                console.log("connection id: ", call.connectionId)
-                console
-                setPairId(call.connectionId)
+                console.log("connection id: ", call.peer)
+                setPairId(call.peer)
 
                 call.on('stream', (remoteStream) => {
                     // Properly set the remote stream for the video element
                     console.log("stream incoming")
                     if (remoteVideoRef.current) {
-                        if (remoteVideoRef.current.srcObject) {
-                            remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
-                            remoteVideoRef.current.muted = true
-                        }
+                        remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
+                        remoteVideoRef.current.muted = true
                     }
-                    else{
+                    else {
                         console.log("no remote video ref")
                     }
                 });
             });
 
             // Handle incoming data connection (for code updates)
-        newPeer.on('connection', (conn) => {
-            console.log("Data connection established for code sync");
+            newPeer.on('connection', (conn) => {
+                console.log("Data connection established for code sync");
 
-            conn.on('data', (data) => {
-                console.log("Received code:", data);
-                // Update CodeMirror with incoming code changes
+                conn.on('data', (data) => {
+                    console.log("Received code:", data);
+                    // Update CodeMirror with incoming code changes
+                });
+
+                setDataConn(conn)
             });
-
-            setDataConn(conn)
-        });
 
             setPeer(newPeer); // Set the peer instance to state
             // Cleanup on component unmount
@@ -117,26 +114,26 @@ const PeerChat = (props: PeerChatProps) => {
         setupCall()
     }, [stream])
 
-    useEffect( () => {
-        if (!stream || !peer || !peerId){
+    useEffect(() => {
+        if (!stream || !peer || !peerId) {
             return;
         }
         async function checkPairServer(peerId: string) {
             try {
                 const response = await axios.post("https://devroulette.com/pair", { peerId: peerId })
                 const data = response.data
-                if (data.message == "You're first in line"){
+                if (data.message == "You're first in line") {
                     console.log("first")
                 }
-                else if (data.message == "You've been matched"){
+                else if (data.message == "You've been matched") {
                     console.log("calling: ", data.pairId)
-                    callPeer(data.pairId)
+                    setPairId(data.pairId)
                 }
                 else {
                     console.log("idk")
                 }
                 return data
-            }catch(err){
+            } catch (err) {
                 console.log(err)
             }
         }
@@ -144,23 +141,12 @@ const PeerChat = (props: PeerChatProps) => {
     }, [peerId])
 
     useEffect(() => {
-        if (!pairId){
+        if (!pairId) {
             return;
         }
         callPeer(pairId)
 
     }, [pairId])
-
-    // useEffect(() => {
-    //     if (codeMirrorRef.current) {
-    //         const editor = codeMirrorRef.current;
-    
-    //         editor.on('change', (instance, changes) => {
-    //             const updatedCode = instance.getValue();
-    //             handleCodeChange(updatedCode);
-    //         });
-    //     }
-    // }, []);
 
     const callPeer = (peerId: string) => {
 
@@ -173,14 +159,14 @@ const PeerChat = (props: PeerChatProps) => {
                         remoteVideoRef.current.srcObject = remoteStream; // Set remote video source
                     }
                 });
+                peer.connect("data")
             }
         }
         else {
             console.log("Call failed. There was no local peer")
-        
         }
     };
-    
+
 
     return (
         <div className="peerchat">
