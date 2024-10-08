@@ -55,21 +55,7 @@ const PeerChat = () => {
             newPeer.on('open', async (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
                 console.log('My peer ID is:', id);
-                //send peer id to the pair API
-                const data = await checkPairServer(id)
-                console.log("pair id obj:", { data })
-
-                if (data.message === "You're first in line"){
-                    console.log("You're first in line")
-                }else if (data.message === "You've been matched") {
-                    console.log("You've been matched", "calling peer id")
-                    callPeer(data.peerId)
-                }
-
-
-                //if partner, call them
-
-                //otherwise wait
+                
             });
 
             // Handle incoming connections
@@ -100,6 +86,7 @@ const PeerChat = () => {
             });
 
             setPeer(newPeer); // Set the peer instance to state
+            checkPairServer(peerId)
 
             // Cleanup on component unmount
             return () => {
@@ -130,8 +117,8 @@ const PeerChat = () => {
     // };
 
     const callPeer = (peerId: string) => {
-        if (peer) {
 
+        if (peer) {
             console.log("----------- calling peer ----------------")
             if (stream && peer) {
                 const call = peer.call(peerId, stream);
@@ -141,6 +128,9 @@ const PeerChat = () => {
                     }
                 });
             }
+        }
+        else {
+            console.log("Call failed. There was no local peer")
         }
     };
 
