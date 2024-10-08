@@ -42,20 +42,9 @@ const PeerChat = () => {
                 secure: true
             }); // Create a new Peer instance
 
-            async function checkPairServer(peerId: string) {
-                try {
-                    const response = await axios.post("https://devroulette.com/pair", { peerId: peerId })
-                    console.log(response.data)
-                    return response.data
-                }catch(err){
-                    console.log(err)
-                }
-            }
-
             newPeer.on('open', async (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
                 console.log('My peer ID is:', id);
-                
             });
 
             // Handle incoming connections
@@ -86,8 +75,6 @@ const PeerChat = () => {
             });
 
             setPeer(newPeer); // Set the peer instance to state
-            checkPairServer(peerId)
-
             // Cleanup on component unmount
             return () => {
                 newPeer.destroy(); // Destroy the peer when the component is unmounted
@@ -96,6 +83,28 @@ const PeerChat = () => {
 
         setupCall()
     }, [stream])
+
+    useEffect( () => {
+        if (!stream || !peer || !peerId){
+            return;
+        }
+        async function checkPairServer(peerId: string) {
+            try {
+                const response: {message: string, peerId: string} = await axios.post("https://devroulette.com/pair", { peerId: peerId })
+                console.log(response.message)
+                if (response.message == "You're first in line"){
+                    console.log("first")
+                }
+                else if (response.message == "You've been matched"){
+                    callPeer(response.peerId)
+                }
+                return response.message
+            }catch(err){
+                console.log(err)
+            }
+        }
+        checkPairServer(peerId)
+    }, [peerId])
 
 
     // const connectToPeer = (otherPeerId: string) => {
