@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import axios from "axios"
 import "./PeerChat.scss";
-import CodeEditor from '../CodeEditor/CodeEditor';
+// import CodeEditor from '../CodeEditor/CodeEditor';
 
 interface PeerChatProps {
     code: string,
@@ -180,20 +180,12 @@ const PeerChat = (props: PeerChatProps) => {
         
         }
     };
-
-    const handleCodeChange = (code: string) => {
-        // Send the updated code to the connected peer
-        if (dataConn) {
-            dataConn.send(code);
-        }
-    };
     
 
     return (
         <div className="peerchat">
             <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
-            {/* <CodeEditor code={code} setCode={setCode}/> */}
         </div>
     );
 };
