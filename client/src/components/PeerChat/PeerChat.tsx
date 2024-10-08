@@ -77,6 +77,7 @@ const PeerChat = () => {
                     if (remoteVideoRef.current) {
                         if (remoteVideoRef.current.srcObject) {
                             remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
+                            remoteVideoRef.current.muted = true
                         }
                     }
                     else{
