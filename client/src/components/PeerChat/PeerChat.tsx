@@ -6,8 +6,6 @@ const PeerChat = () => {
     const [peerId, setPeerId] = useState('');
     const [peer, setPeer] = useState<Peer | null>(null);
     const [pairId, setPairId] = useState<string | null>(null)
-    // const [messages, setMessages] = useState<string[]>([]);
-    // const [connection, setConnection] = useState<DataConnection | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null)
 
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
@@ -40,7 +38,12 @@ const PeerChat = () => {
             const newPeer = new Peer({
                 host: 'devroulette.com',
                 path: '/myapp',
-                secure: true
+                secure: true,
+                config: {
+                    'iceServers': [
+                        { url: 'stun:stun.l.google.com:19302' }, // A commonly used free STUN server
+                    ]
+                }
             }); // Create a new Peer instance
 
             newPeer.on('open', async (id) => {
@@ -65,6 +68,7 @@ const PeerChat = () => {
                     console.log("---------- no stream yet to reply with-----------------")
                 }
                 console.log("connection id: ", call.connectionId)
+                console
                 setPairId(call.connectionId)
 
                 call.on('stream', (remoteStream) => {
