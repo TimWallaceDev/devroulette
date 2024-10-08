@@ -96,8 +96,8 @@ const PeerChat = () => {
                     console.log("first")
                 }
                 else if (data.message == "You've been matched"){
-                    console.log("calling: ", data.peerId)
-                    callPeer(data.peerId)
+                    console.log("calling: ", data.pairId)
+                    callPeer(data.pairId)
                 }
                 else {
                     console.log("idk")
