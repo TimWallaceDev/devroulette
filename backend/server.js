@@ -37,6 +37,7 @@ app.get("/join", (req, res) => {
     let peerId;
     try {
         peerId = req.body.peerId
+        console.log("peerId server found is: ", peerId)
     }catch(err){
         console.log("no peer id found")
         res.status(400).json({message: "no peer id found in request to pairing server"})
