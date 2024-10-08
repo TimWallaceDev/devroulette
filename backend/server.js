@@ -1,6 +1,6 @@
 // server.js
 const { PeerServer } = require('peer');
-const { express } = require('express');
+const express = require('express');
 
 const peerServer = PeerServer({
     port: 9000,   // Server will run on port 9000
@@ -34,7 +34,13 @@ const queue = []
 
 app.get("/join", (req, res) => {
     //get the Peer id
-    const peerId = ""
+    let peerId;
+    try {
+        peerId = req.body.peerId
+    }catch(err){
+        console.log("no peer id found")
+        res.status(400).json({message: "no peer id found in request to pairing server"})
+    }
     if (queue.length === 0 ){
         queue.push(peerId)
         res.status(202).json({message: "You're first in line"})

@@ -5,8 +5,8 @@ import axios from "axios"
 const PeerChat = () => {
     const [peerId, setPeerId] = useState('');
     const [peer, setPeer] = useState<Peer | null>(null);
-    const [messages, setMessages] = useState<string[]>([]);
-    const [connection, setConnection] = useState<DataConnection | null>(null);
+    // const [messages, setMessages] = useState<string[]>([]);
+    // const [connection, setConnection] = useState<DataConnection | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null)
 
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
@@ -57,12 +57,12 @@ const PeerChat = () => {
             });
 
             // Handle incoming connections
-            newPeer.on('connection', (conn) => {
-                setConnection(conn);
-                conn.on('data', (data) => {
-                    setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
-                });
-            });
+            // newPeer.on('connection', (conn) => {
+            //     setConnection(conn);
+            //     conn.on('data', (data) => {
+            //         setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
+            //     });
+            // });
 
             newPeer.on('call', (call: MediaConnection) => {
                 console.log("----------- call incoming! - ------------")
@@ -98,23 +98,23 @@ const PeerChat = () => {
         return "loading"
     }
 
-    const connectToPeer = (otherPeerId: string) => {
-        const conn = peer.connect(otherPeerId);
-        setConnection(conn);
-        conn.on('open', () => {
-            console.log('Connected to peer:', otherPeerId);
-            conn.on('data', (data) => {
-                setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
-            });
-        });
-    };
+    // const connectToPeer = (otherPeerId: string) => {
+    //     const conn = peer.connect(otherPeerId);
+    //     setConnection(conn);
+    //     conn.on('open', () => {
+    //         console.log('Connected to peer:', otherPeerId);
+    //         conn.on('data', (data) => {
+    //             setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
+    //         });
+    //     });
+    // };
 
-    const sendMessage = (message: string) => {
-        if (connection) {
-            connection.send(message); // Send the message through the established connection
-            setMessages((prevMessages) => [...prevMessages, message]); // Update messages to include the sent message
-        }
-    };
+    // const sendMessage = (message: string) => {
+    //     if (connection) {
+    //         connection.send(message); // Send the message through the established connection
+    //         setMessages((prevMessages) => [...prevMessages, message]); // Update messages to include the sent message
+    //     }
+    // };
 
     const callPeer = (peerId: string) => {
         console.log("----------- calling peer ----------------")
@@ -131,7 +131,7 @@ const PeerChat = () => {
     return (
         <div>
             <h1>Peer ID: {peerId}</h1>
-            <div>
+            {/* <div>
                 <input
                     type="text"
                     placeholder="Connect to peer ID"
@@ -164,7 +164,7 @@ const PeerChat = () => {
                         }
                     }}
                 />
-            </div>
+            </div> */}
             <video ref={localVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <input
