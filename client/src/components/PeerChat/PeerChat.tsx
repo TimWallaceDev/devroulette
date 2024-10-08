@@ -59,6 +59,13 @@ const PeerChat = () => {
                 const data = await checkPairServer(id)
                 console.log("pair id obj:", { data })
 
+                if (data.message === "You're first in line"){
+                    console.log("You're first in line")
+                }else if (data.message === "You've been matched") {
+                    console.log("You've been matched", "calling peer id")
+                    callPeer(data.peerId)
+                }
+
 
                 //if partner, call them
 
