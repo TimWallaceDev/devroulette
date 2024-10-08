@@ -90,15 +90,18 @@ const PeerChat = () => {
         }
         async function checkPairServer(peerId: string) {
             try {
-                const response: {message: string, peerId: string} = await axios.post("https://devroulette.com/pair", { peerId: peerId })
-                console.log(response.message)
-                if (response.message == "You're first in line"){
+                const response = await axios.post("https://devroulette.com/pair", { peerId: peerId })
+                const data = response.data
+                if (data.message == "You're first in line"){
                     console.log("first")
                 }
-                else if (response.message == "You've been matched"){
-                    callPeer(response.peerId)
+                else if (data.message == "You've been matched"){
+                    callPeer(data.peerId)
                 }
-                return response.message
+                else {
+                    console.log("idk")
+                }
+                return data
             }catch(err){
                 console.log(err)
             }
