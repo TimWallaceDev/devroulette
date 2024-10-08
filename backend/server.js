@@ -32,7 +32,7 @@ app.use(express.json())
 
 const queue = []
 
-app.get("/join", (req, res) => {
+app.post("/join", (req, res) => {
     //get the Peer id
     let peerId;
     try {
