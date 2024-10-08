@@ -14,7 +14,7 @@ export function Code() {
                 <CodeEditor code={code} setCode={setCode}/>
             </div>
             <div className="chat">
-                <PeerChat code={code}/>
+                <PeerChat code={code} setCode={setCode}/>
             </div>
         </main>
     )

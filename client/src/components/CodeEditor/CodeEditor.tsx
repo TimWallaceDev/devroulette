@@ -14,15 +14,15 @@ const CodeEditor = (props: CodeEditorProps) => {
     const code = props.code
     const setCode = props.setCode
 
-    const runCode = () => {
-        try {
-            // Using eval (caution advised)
-            eval(code);
-        } catch (error) {
-            console.error('Error executing code:', error);
-            alert('Error executing code: ' + error);
-        }
-    };
+    // const runCode = () => {
+    //     try {
+    //         // Using eval (caution advised)
+    //         eval(code);
+    //     } catch (error) {
+    //         console.error('Error executing code:', error);
+    //         alert('Error executing code: ' + error);
+    //     }
+    // };
 
     // function handleCodeChange(instance: any){
     //     const updatedCode = instance.getValue()
