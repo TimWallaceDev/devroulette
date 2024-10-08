@@ -14,22 +14,6 @@ const CodeEditor = (props: CodeEditorProps) => {
     const code = props.code
     const setCode = props.setCode
 
-    // const runCode = () => {
-    //     try {
-    //         // Using eval (caution advised)
-    //         eval(code);
-    //     } catch (error) {
-    //         console.error('Error executing code:', error);
-    //         alert('Error executing code: ' + error);
-    //     }
-    // };
-
-    // function handleCodeChange(instance: any){
-    //     const updatedCode = instance.getValue()
-    //     console.log(updatedCode)
-    //     setCode(updatedCode)
-    // }
-
     return (
         <div className="code-editor">
             <h1>HTML Code Editor</h1>
@@ -42,8 +26,9 @@ const CodeEditor = (props: CodeEditorProps) => {
                 }}
                 onBeforeChange={(editor: any, data: any, value: any) => {
                     console.log(value)
+                    editor;
+                    data;
                     setCode(value);
-                    // handleCodeChange(editor)
                 }}
                 
             />
