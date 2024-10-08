@@ -204,7 +204,7 @@ const PeerChat = () => {
                     }}
                 />
             </div> */}
-            <video ref={localVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
+            <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <input
                 type="text"
