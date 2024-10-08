@@ -31,6 +31,9 @@ const PeerChat = () => {
     }, []);
 
     useEffect(() => {
+        if (!stream) {
+            return;
+        }
         function setupCall() {
             console.log("setting up call")
             const newPeer = new Peer({
@@ -39,17 +42,22 @@ const PeerChat = () => {
                 secure: true
             }); // Create a new Peer instance
 
-            async function checkPairServer(peerId: string){
-                const response = await axios.post("https://devroulette.com/pair", {peerId: peerId})
-                return response.data
+            async function checkPairServer(peerId: string) {
+                try {
+
+                    const response = await axios.post("https://devroulette.com/pair", { peerId: peerId })
+                    return response.data.peerId
+                }catch(err){
+                    console.log(err)
+                }
             }
 
             newPeer.on('open', (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
                 console.log('My peer ID is:', id);
                 //send peer id to the pair API
-                const check = checkPairServer(id)
-                console.log("pair id response from server:", {check})
+                const peerId = checkPairServer(id)
+                console.log("pair id:", { peerId })
 
                 //if partner, call them
 
@@ -94,9 +102,6 @@ const PeerChat = () => {
         setupCall()
     }, [stream])
 
-    if (!peer) {
-        return "loading"
-    }
 
     // const connectToPeer = (otherPeerId: string) => {
     //     const conn = peer.connect(otherPeerId);
@@ -117,14 +122,17 @@ const PeerChat = () => {
     // };
 
     const callPeer = (peerId: string) => {
-        console.log("----------- calling peer ----------------")
-        if (stream) {
-            const call = peer.call(peerId, stream);
-            call.on('stream', (remoteStream) => {
-                if (remoteVideoRef.current) {
-                    remoteVideoRef.current.srcObject = remoteStream; // Set remote video source
-                }
-            });
+        if (peer) {
+
+            console.log("----------- calling peer ----------------")
+            if (stream && peer) {
+                const call = peer.call(peerId, stream);
+                call.on('stream', (remoteStream) => {
+                    if (remoteVideoRef.current) {
+                        remoteVideoRef.current.srcObject = remoteStream; // Set remote video source
+                    }
+                });
+            }
         }
     };
 
