@@ -1,15 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
-import Peer, { MediaConnection } from 'peerjs';
+import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import axios from "axios"
+import "./PeerChat.scss";
+import CodeEditor from '../CodeEditor/CodeEditor';
 
-const PeerChat = () => {
+interface PeerChatProps {
+    code: string,
+    setCode: React.Dispatch<React.SetStateAction<string>>
+}
+
+const PeerChat = (props: PeerChatProps) => {
     const [peerId, setPeerId] = useState('');
     const [peer, setPeer] = useState<Peer | null>(null);
     const [pairId, setPairId] = useState<string | null>(null)
     const [stream, setStream] = useState<MediaStream | null>(null)
+    const [dataConn, setDataConn] = useState<DataConnection | null>(null)
 
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
+
+    const code = props.code
+
+    useEffect(()=> {
+        console.log("code has been updated. sending it to the homie")
+        if (dataConn){
+            dataConn.send(code)
+        }
+    }, [code])
 
     useEffect(() => {
         async function getMedia() {
@@ -51,14 +68,6 @@ const PeerChat = () => {
                 console.log('My peer ID is:', id);
             });
 
-            // Handle incoming connections
-            // newPeer.on('connection', (conn) => {
-            //     setConnection(conn);
-            //     conn.on('data', (data) => {
-            //         setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
-            //     });
-            // });
-
             newPeer.on('call', (call: MediaConnection) => {
                 console.log("----------- call incoming! - ------------")
                 if (stream) {
@@ -85,6 +94,18 @@ const PeerChat = () => {
                     }
                 });
             });
+
+            // Handle incoming data connection (for code updates)
+        newPeer.on('connection', (conn) => {
+            console.log("Data connection established for code sync");
+
+            conn.on('data', (data) => {
+                console.log("Received code:", data);
+                // Update CodeMirror with incoming code changes
+            });
+
+            setDataConn(conn)
+        });
 
             setPeer(newPeer); // Set the peer instance to state
             // Cleanup on component unmount
@@ -130,24 +151,16 @@ const PeerChat = () => {
 
     }, [pairId])
 
-
-    // const connectToPeer = (otherPeerId: string) => {
-    //     const conn = peer.connect(otherPeerId);
-    //     setConnection(conn);
-    //     conn.on('open', () => {
-    //         console.log('Connected to peer:', otherPeerId);
-    //         conn.on('data', (data) => {
-    //             setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
+    // useEffect(() => {
+    //     if (codeMirrorRef.current) {
+    //         const editor = codeMirrorRef.current;
+    
+    //         editor.on('change', (instance, changes) => {
+    //             const updatedCode = instance.getValue();
+    //             handleCodeChange(updatedCode);
     //         });
-    //     });
-    // };
-
-    // const sendMessage = (message: string) => {
-    //     if (connection) {
-    //         connection.send(message); // Send the message through the established connection
-    //         setMessages((prevMessages) => [...prevMessages, message]); // Update messages to include the sent message
     //     }
-    // };
+    // }, []);
 
     const callPeer = (peerId: string) => {
 
@@ -168,56 +181,19 @@ const PeerChat = () => {
         }
     };
 
+    const handleCodeChange = (code: string) => {
+        // Send the updated code to the connected peer
+        if (dataConn) {
+            dataConn.send(code);
+        }
+    };
+    
+
     return (
-        <div>
-            <h1>Peer ID: {peerId}</h1>
-            {/* <div>
-                <input
-                    type="text"
-                    placeholder="Connect to peer ID"
-                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') {
-                            const target = e.target as HTMLInputElement
-                            connectToPeer(target.value);
-                            target.value = ''; // Clear the input
-                        }
-                    }}
-                />
-            </div>
-            <div>
-                <h2>Messages:</h2>
-                <ul>
-                    {messages.map((msg, index) => (
-                        <li key={index}>{msg}</li>
-                    ))}
-                </ul>
-            </div>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Type a message"
-                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') {
-                            const target = e.target as HTMLInputElement
-                            sendMessage(target.value);
-                            target.value = ''; // Clear the input
-                        }
-                    }}
-                />
-            </div> */}
+        <div className="peerchat">
             <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
-            <input
-                type="text"
-                placeholder="video to peer ID"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === 'Enter') {
-                        const target = e.target as HTMLInputElement
-                        callPeer(target.value);
-                        target.value = ''; // Clear the input
-                    }
-                }}
-            />
+            {/* <CodeEditor code={code} setCode={setCode}/> */}
         </div>
     );
 };
