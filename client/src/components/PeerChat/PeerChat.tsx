@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import Peer, { DataConnection, MediaConnection } from 'peerjs';
+import Peer, { MediaConnection } from 'peerjs';
 import axios from "axios"
 
 const PeerChat = () => {
