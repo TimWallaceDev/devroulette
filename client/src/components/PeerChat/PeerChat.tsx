@@ -44,20 +44,21 @@ const PeerChat = () => {
 
             async function checkPairServer(peerId: string) {
                 try {
-
                     const response = await axios.post("https://devroulette.com/pair", { peerId: peerId })
-                    return response.data.peerId
+                    console.log(response.data)
+                    return response.data
                 }catch(err){
                     console.log(err)
                 }
             }
 
-            newPeer.on('open', (id) => {
+            newPeer.on('open', async (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
                 console.log('My peer ID is:', id);
                 //send peer id to the pair API
-                const peerId = checkPairServer(id)
-                console.log("pair id:", { peerId })
+                const data = await checkPairServer(id)
+                console.log("pair id obj:", { data })
+
 
                 //if partner, call them
 
