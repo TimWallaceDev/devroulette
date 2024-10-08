@@ -5,6 +5,7 @@ import axios from "axios"
 const PeerChat = () => {
     const [peerId, setPeerId] = useState('');
     const [peer, setPeer] = useState<Peer | null>(null);
+    const [pairId, setPairId] = useState<string | null>(null)
     // const [messages, setMessages] = useState<string[]>([]);
     // const [connection, setConnection] = useState<DataConnection | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null)
@@ -63,13 +64,19 @@ const PeerChat = () => {
                 else {
                     console.log("---------- no stream yet to reply with-----------------")
                 }
+                console.log("connection id: ", call.connectionId)
+                setPairId(call.connectionId)
 
                 call.on('stream', (remoteStream) => {
                     // Properly set the remote stream for the video element
+                    console.log("stream incoming")
                     if (remoteVideoRef.current) {
                         if (remoteVideoRef.current.srcObject) {
                             remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
                         }
+                    }
+                    else{
+                        console.log("no remote video ref")
                     }
                 });
             });
@@ -110,6 +117,14 @@ const PeerChat = () => {
         checkPairServer(peerId)
     }, [peerId])
 
+    useEffect(() => {
+        if (!pairId){
+            return;
+        }
+        callPeer(pairId)
+
+    }, [pairId])
+
 
     // const connectToPeer = (otherPeerId: string) => {
     //     const conn = peer.connect(otherPeerId);
@@ -144,6 +159,7 @@ const PeerChat = () => {
         }
         else {
             console.log("Call failed. There was no local peer")
+        
         }
     };
 
