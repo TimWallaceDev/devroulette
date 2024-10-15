@@ -1,5 +1,5 @@
 // src/CodeEditor.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/javascript/javascript';
@@ -13,6 +13,11 @@ interface CodeEditorProps {
 const CodeEditor = (props: CodeEditorProps) => {
     const code = props.code
     const setCode = props.setCode
+
+    useEffect(() => {
+        console.log("new code for the editor bruh")
+        console.log(code)
+    }, [code])
 
     return (
         <div className="code-editor">
