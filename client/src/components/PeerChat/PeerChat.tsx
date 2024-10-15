@@ -20,9 +20,10 @@ const PeerChat = (props: PeerChatProps) => {
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
     const code = props.code
+    const setCode = props.setCode
 
     useEffect(() => {
-        console.log("code has been updated. sending it to the homie")
+        console.log("code has been updated. sending it to the homie", code)
         if (dataConn) {
             dataConn.send(code)
         }
@@ -96,8 +97,9 @@ const PeerChat = (props: PeerChatProps) => {
             newPeer.on('connection', (conn) => {
                 console.log("Data connection established for code sync");
 
-                conn.on('data', (data) => {
+                conn.on('data', (data: unknown) => {
                     console.log("Received code:", data);
+                    setCode(JSON.stringify(data))
                     // Update CodeMirror with incoming code changes
                 });
 
