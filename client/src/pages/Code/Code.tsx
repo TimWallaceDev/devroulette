@@ -16,6 +16,9 @@ export function Code() {
             <div className="chat">
                 <PeerChat code={code} setCode={setCode}/>
             </div>
+            <div className="test">
+                {code}
+            </div>
         </main>
     )
 }
