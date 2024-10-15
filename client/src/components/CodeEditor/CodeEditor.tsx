@@ -11,8 +11,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const code = props.code
-    const setCode = props.setCode
+    const {code, setCode} = props
 
     useEffect(() => {
         console.log("new code for the editor bruh")

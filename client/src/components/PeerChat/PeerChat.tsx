@@ -99,7 +99,9 @@ const PeerChat = (props: PeerChatProps) => {
 
                 conn.on('data', (data: unknown) => {
                     console.log("Received code:", data);
-                    setCode(JSON.stringify(data))
+                    const strd = JSON.stringify(data)
+                    console.log(strd)
+                    setCode(strd)
                     // Update CodeMirror with incoming code changes
                 });
 
@@ -175,6 +177,7 @@ const PeerChat = (props: PeerChatProps) => {
             const dataConn = peer.connect(peerId)
             dataConn.on("data", data => {
                 console.log("data received: ", data)
+                setCode(JSON.stringify(code))
             })
         }
     }
