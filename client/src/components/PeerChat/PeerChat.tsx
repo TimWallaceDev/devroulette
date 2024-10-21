@@ -12,7 +12,6 @@ interface PeerChatProps {
 }
 
 const PeerChat = (props: PeerChatProps) => {
-    const [peerId, setPeerId] = useState('');
     const [peer, setPeer] = useState<Peer | null>(null);
     const [pairId, setPairId] = useState<string | null>(null)
     const [stream, setStream] = useState<MediaStream | null>(null)
@@ -21,12 +20,11 @@ const PeerChat = (props: PeerChatProps) => {
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
-    const code = props.code
-    const setCode = props.setCode
+    const {code, setCode, peerId, setPeerId} = props
 
     useEffect(() => {
         if (dataConn) {
-            if (code.author !== peerId) {
+            if (code.author == peerId) {
                 // console.log("code has been updated. sending to peer", code)
                 dataConn.send(code)
             }else {
@@ -104,10 +102,11 @@ const PeerChat = (props: PeerChatProps) => {
                 console.log("Data connection established for code sync");
 
                 conn.on('data', (data: unknown) => {
-                    const strd = JSON.stringify(data)
-                    console.log("code has been stringified: ", strd)
-                    const updatedCode = {author: peerId, code: strd}
+                   
+		    console.log("incomming data: ", data)
+                    const updatedCode = data as CodeData
                     setCode(updatedCode)
+
                     // Update CodeMirror with incoming code changes
                 });
 
@@ -181,9 +180,10 @@ const PeerChat = (props: PeerChatProps) => {
         console.log("creating a data connection with the peer")
         if (peer) {
             const dataConn = peer.connect(peerId)
-            dataConn.on("data", data => {
-                console.log("data received: ", data)
-                setCode(JSON.stringify(code))
+            dataConn.on("data", data  => {
+                console.log("incomming data: ", data)
+                const updatedCode = data as CodeData
+                setCode(updatedCode)
             })
         }
     }
