@@ -25,10 +25,7 @@ const PeerChat = (props: PeerChatProps) => {
     useEffect(() => {
         if (dataConn) {
             if (code.author == peerId) {
-                // console.log("code has been updated. sending to peer", code)
                 dataConn.send(code)
-            }else {
-                console.log("not updating because I already did.")
             }
         }
     }, [code])
@@ -138,9 +135,6 @@ const PeerChat = (props: PeerChatProps) => {
                     console.log("calling: ", data.pairId)
                     setPairId(data.pairId)
                 }
-                else {
-                    console.log("idk")
-                }
                 return data
             } catch (err) {
                 console.log(err)
@@ -177,37 +171,19 @@ const PeerChat = (props: PeerChatProps) => {
     };
 
     function createDataConnection(peerId: string) {
-        console.log("creating a data connection with the peer")
         if (peer) {
             const dataConn = peer.connect(peerId)
             dataConn.on("data", data  => {
-                console.log("incomming data: ", data)
                 const updatedCode = data as CodeData
                 setCode(updatedCode)
             })
         }
     }
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        const target = e.target as typeof e.target & {
-            message: { value: string };
-        };
-
-        const messageValue = target.message.value;
-        dataConn?.send(messageValue)
-    }
-
-
     return (
         <div className="peerchat">
             <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
             <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
-
-            <form onSubmit={(e) => handleSubmit(e)}>
-                <input type="text" name="message"></input>
-                <button type="submit">Send</button>
-            </form>
         </div>
     );
 };

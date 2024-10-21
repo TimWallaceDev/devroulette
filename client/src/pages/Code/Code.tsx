@@ -2,7 +2,7 @@ import "./Code.scss";
 import PeerChat from "../../components/PeerChat/PeerChat";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import { useState } from "react";
-import { template } from "./template.tsx";
+import { template } from "../../components/CodeEditor/template.tsx";
 
 export interface CodeData {
     author: string,
