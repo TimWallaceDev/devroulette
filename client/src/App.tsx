@@ -6,7 +6,6 @@ import { Home } from './pages/Home/Home'
 import { Code } from './pages/Code/Code'
 
 function App() {
-
  
   return (
     <BrowserRouter>

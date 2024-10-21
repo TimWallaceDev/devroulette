@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import axios from "axios"
 import "./PeerChat.scss";
-// import CodeEditor from '../CodeEditor/CodeEditor';
+import { CodeData } from '../../pages/Code/Code';
 
 interface PeerChatProps {
-    code: string,
-    setCode: React.Dispatch<React.SetStateAction<string>>
+    code: CodeData,
+    setCode: React.Dispatch<React.SetStateAction<CodeData>>,
+    peerId: string,
+    setPeerId: React.Dispatch<React.SetStateAction<string>>
 }
 
 const PeerChat = (props: PeerChatProps) => {
@@ -23,9 +25,13 @@ const PeerChat = (props: PeerChatProps) => {
     const setCode = props.setCode
 
     useEffect(() => {
-        console.log("code has been updated. sending it to the homie", code)
         if (dataConn) {
-            dataConn.send(code)
+            if (code.author !== peerId) {
+                // console.log("code has been updated. sending to peer", code)
+                dataConn.send(code)
+            }else {
+                console.log("not updating because I already did.")
+            }
         }
     }, [code])
 
@@ -98,10 +104,10 @@ const PeerChat = (props: PeerChatProps) => {
                 console.log("Data connection established for code sync");
 
                 conn.on('data', (data: unknown) => {
-                    console.log("Received code:", data);
                     const strd = JSON.stringify(data)
-                    console.log(strd)
-                    setCode(strd)
+                    console.log("code has been stringified: ", strd)
+                    const updatedCode = {author: peerId, code: strd}
+                    setCode(updatedCode)
                     // Update CodeMirror with incoming code changes
                 });
 
