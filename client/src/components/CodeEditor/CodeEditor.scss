@@ -1,10 +1,14 @@
 .code-editor {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     min-height: calc(100vh - 8px);
 }
 
 .iframe {
     width: 100%;
     flex: 1;
+}
+
+.CodeMirror {
+    height: 100%;
 }

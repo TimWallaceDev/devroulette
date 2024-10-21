@@ -17,13 +17,15 @@ const CodeEditor = (props: CodeEditorProps) => {
 
     return (
         <div className="code-editor">
-            <h1>HTML Code Editor</h1>
+            {/* <h1>HTML Code Editor</h1> */}
+            <iframe  className="iframe" srcDoc={code.code} title="Code Output"/>
             <CodeMirror
+            className='IDE'
                 value={code.code}
                 options={{
                     lineNumbers: true,
                     mode: 'javascript',
-                    theme: 'default',
+                    theme: 'dark',
                 }}
                 onBeforeChange={(editor: any, data: any, value: any) => {
                     editor;
@@ -36,7 +38,6 @@ const CodeEditor = (props: CodeEditorProps) => {
 
             />
 
-            <iframe  className="iframe" srcDoc={code.code} title="Code Output"/>
         </div>
     );
 };
