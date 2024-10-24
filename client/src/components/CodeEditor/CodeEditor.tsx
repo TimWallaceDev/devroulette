@@ -20,7 +20,7 @@ interface CodeEditorProps {
 
 const CodeEditor = (props: CodeEditorProps) => {
     const { code, setCode, peerId, setChanges, editorRef } = props
-    
+
 
     useEffect(() => {
 
@@ -53,7 +53,7 @@ const CodeEditor = (props: CodeEditorProps) => {
         // Get the CodeMirror instance from the editor
         console.log(editor)
         let cm;
-        if (editorRef.current){
+        if (editorRef.current) {
             cm = editorRef.current.editor;
         }
 
@@ -65,7 +65,7 @@ const CodeEditor = (props: CodeEditorProps) => {
         );
     };
 
-    function updateEditor(){
+    function updateEditor() {
         const changes: ChangeObject = {
             "from": {
                 "line": 21,
@@ -109,11 +109,13 @@ const CodeEditor = (props: CodeEditorProps) => {
                     editor;
                     value;
                     console.log(data)
-                    const changes = getChangeSet(data);
-                    console.log('Changes to send:', changes);
-                    setChanges(changes)
+                    if (data.origin !== 'remote') {
+                        const changes = getChangeSet(data);
+                        console.log('Changes to send:', changes);
+                        setChanges(changes)
+                    }
                 }}
-                
+
             />
 
         </div>

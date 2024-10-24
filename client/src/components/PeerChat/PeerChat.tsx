@@ -209,7 +209,8 @@ const PeerChat = (props: PeerChatProps) => {
             cm.replaceRange(
                 change.text,
                 change.from,
-                change.to
+                change.to,
+                'remote'
             );
         } catch (err) {
             console.log(err)
