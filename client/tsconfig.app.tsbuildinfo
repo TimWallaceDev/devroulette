@@ -1,1 +1,1 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/CodeEditor/CodeEditor.tsx","./src/components/PeerChat/PeerChat.tsx","./src/pages/Code/Code.tsx","./src/pages/Home/Home.tsx"],"version":"5.6.2"}
+{"root":["./src/app.tsx","./src/interface.ts","./src/main.tsx","./src/vite-env.d.ts","./src/components/codeeditor/codeeditor.tsx","./src/components/codeeditor/template.tsx","./src/components/peerchat/peerchat.tsx","./src/pages/code/code.tsx","./src/pages/code/template.tsx","./src/pages/home/home.tsx"],"version":"5.6.2"}
