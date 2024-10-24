@@ -177,8 +177,8 @@ const PeerChat = (props: PeerChatProps) => {
         if (peer) {
             const dataConn = peer.connect(peerId)
             dataConn.on("data", data => {
-                const updatedCode = data as CodeData
-                setCode(updatedCode)
+                const changes = data as ChangeObject
+                applyChange(editorRef, changes)
             })
         }
     }
