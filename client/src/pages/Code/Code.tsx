@@ -1,12 +1,19 @@
 import "./Code.scss";
 import PeerChat from "../../components/PeerChat/PeerChat";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { template } from "../../components/CodeEditor/template.tsx";
 
 export interface CodeData {
     author: string,
     code: string
+}
+
+interface ChangeObject {
+    from: { line: number; ch: number };
+    to: { line: number; ch: number };
+    text: string;
+    removed: string;
 }
 
 
@@ -16,13 +23,17 @@ export function Code() {
 
     const [code, setCode] = useState<CodeData>({author: "default", code: JSON.parse(template)});
 
+    const [changes, setChanges] = useState<ChangeObject | null>(null)
+
+    const editorRef = useRef<any>();
+
     return (
         <main className="code">
             <div className="editor">
-                <CodeEditor code={code} setCode={setCode} peerId={peerId}/>
+                <CodeEditor code={code} setCode={setCode} peerId={peerId} setChanges={setChanges} editorRef={editorRef}/>
             </div>
             <div className="chat">
-                <PeerChat code={code} setCode={setCode}  peerId={peerId} setPeerId={setPeerId}/>
+                <PeerChat code={code} setCode={setCode}  peerId={peerId} setPeerId={setPeerId} changes={changes} editorRef={editorRef}/>
             </div>
         </main>
     )

@@ -3,12 +3,15 @@ import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import axios from "axios"
 import "./PeerChat.scss";
 import { CodeData } from '../../pages/Code/Code';
+import { ChangeObject } from '../../interface';
 
 interface PeerChatProps {
     code: CodeData,
     setCode: React.Dispatch<React.SetStateAction<CodeData>>,
     peerId: string,
     setPeerId: React.Dispatch<React.SetStateAction<string>>
+    changes: ChangeObject | null,
+    editorRef: React.MutableRefObject<any>
 }
 
 const PeerChat = (props: PeerChatProps) => {
@@ -20,15 +23,15 @@ const PeerChat = (props: PeerChatProps) => {
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
-    const {code, setCode, peerId, setPeerId} = props
+    const { setCode, peerId, setPeerId, changes, editorRef } = props
 
     useEffect(() => {
         if (dataConn) {
-            if (code.author == peerId) {
-                dataConn.send(code)
-            }
+
+            dataConn.send(changes)
+
         }
-    }, [code])
+    }, [changes])
 
     useEffect(() => {
         async function getMedia() {
@@ -99,10 +102,10 @@ const PeerChat = (props: PeerChatProps) => {
                 console.log("Data connection established for code sync");
 
                 conn.on('data', (data: unknown) => {
-                   
-		    console.log("incomming data: ", data)
-                    const updatedCode = data as CodeData
-                    setCode(updatedCode)
+
+                    console.log("incomming data: ", data)
+                    const change = data as ChangeObject
+                    applyChange(editorRef, change)
 
                     // Update CodeMirror with incoming code changes
                 });
@@ -173,12 +176,28 @@ const PeerChat = (props: PeerChatProps) => {
     function createDataConnection(peerId: string) {
         if (peer) {
             const dataConn = peer.connect(peerId)
-            dataConn.on("data", data  => {
+            dataConn.on("data", data => {
                 const updatedCode = data as CodeData
                 setCode(updatedCode)
             })
         }
     }
+
+    const applyChange = (editorRef: any, change: ChangeObject) => {
+        // Get the CodeMirror instance from the editor
+        console.log(editorRef)
+        let cm;
+        if (editorRef.current){
+            cm = editorRef.current.editor;
+        }
+
+        // Replace the text at the specified position
+        cm.replaceRange(
+            change.text,
+            change.from,
+            change.to
+        );
+    };
 
     return (
         <div className="peerchat">
