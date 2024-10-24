@@ -1,26 +1,15 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import "./darkmode.scss";
 import 'codemirror/mode/javascript/javascript';
 import "./CodeEditor.scss";
-import { CodeData } from '../../pages/Code/Code';
+import { CodeEditorProps } from '../../interface';
 import { ChangeObject } from '../../interface';
-
-
-interface CodeEditorProps {
-    code: CodeData,
-    setCode: React.Dispatch<React.SetStateAction<CodeData>>
-    peerId: string
-    setChanges: React.Dispatch<React.SetStateAction<ChangeObject | null>>
-    editorRef: React.MutableRefObject<any>
-}
-
 
 
 const CodeEditor = (props: CodeEditorProps) => {
     const { code, setCode, peerId, setChanges, editorRef } = props
-
 
     useEffect(() => {
 
@@ -49,44 +38,9 @@ const CodeEditor = (props: CodeEditorProps) => {
         };
     };
 
-    const applyChange = (editor: any, change: ChangeObject) => {
-        // Get the CodeMirror instance from the editor
-        console.log(editor)
-        let cm;
-        if (editorRef.current) {
-            cm = editorRef.current.editor;
-        }
-
-        // Replace the text at the specified position
-        cm.replaceRange(
-            change.text,
-            change.from,
-            change.to
-        );
-    };
-
-    function updateEditor() {
-        const changes: ChangeObject = {
-            "from": {
-                "line": 21,
-                "ch": 9
-            },
-            "to": {
-                "line": 21,
-                "ch": 9
-            },
-            "text": "s",
-            "removed": ""
-        }
-
-        applyChange(editorRef, changes)
-    }
-
     return (
 
         <div className="code-editor">
-            {/* <h1>HTML Code Editor</h1> */}
-            <button onClick={updateEditor}>Update</button>
             <iframe className="iframe" title="Code Output" />
             <CodeMirror
                 ref={editorRef}
@@ -102,16 +56,13 @@ const CodeEditor = (props: CodeEditorProps) => {
                     data;
                     const newCode = { author: peerId, code: value }
                     setCode(newCode)
-                    // console.log("onbeforechage")
                 }}
                 onChange={(editor, data, value) => {
                     // data contains the change information
                     editor;
                     value;
-                    console.log(data)
                     if (data.origin !== 'remote') {
                         const changes = getChangeSet(data);
-                        console.log('Changes to send:', changes);
                         setChanges(changes)
                     }
                 }}

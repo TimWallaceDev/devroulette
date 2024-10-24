@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import axios from "axios"
 import "./PeerChat.scss";
-import { CodeData } from '../../pages/Code/Code';
+import { CodeData } from '../../interface';
 import { ChangeObject } from '../../interface';
 
 interface PeerChatProps {
@@ -27,9 +27,7 @@ const PeerChat = (props: PeerChatProps) => {
 
     useEffect(() => {
         if (dataConn) {
-
             dataConn.send(changes)
-
         }
     }, [changes])
 
@@ -56,7 +54,6 @@ const PeerChat = (props: PeerChatProps) => {
             return;
         }
         function setupCall() {
-            console.log("setting up call")
             const newPeer = new Peer({
                 host: 'devroulette.com',
                 path: '/myapp',
@@ -70,11 +67,9 @@ const PeerChat = (props: PeerChatProps) => {
 
             newPeer.on('open', async (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
-                console.log('My peer ID is:', id);
             });
 
             newPeer.on('call', (call: MediaConnection) => {
-                console.log("----------- call incoming! - ------------")
                 if (stream) {
                     call.answer(stream); // Answer the call with your media stream (if you want to send your stream)
                 }
@@ -86,7 +81,6 @@ const PeerChat = (props: PeerChatProps) => {
 
                 call.on('stream', (remoteStream) => {
                     // Properly set the remote stream for the video element
-                    console.log("stream incoming")
                     if (remoteVideoRef.current) {
                         remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
                         remoteVideoRef.current.muted = true
@@ -103,11 +97,9 @@ const PeerChat = (props: PeerChatProps) => {
 
                 conn.on('data', (data: unknown) => {
 
-                    console.log("incomming data: ", data)
                     const change = data as ChangeObject
                     applyChange(editorRef, change)
 
-                    // Update CodeMirror with incoming code changes
                 });
 
                 setDataConn(conn)
@@ -135,7 +127,6 @@ const PeerChat = (props: PeerChatProps) => {
                     console.log("first")
                 }
                 else if (data.message == "You've been matched") {
-                    console.log("calling: ", data.pairId)
                     setPairId(data.pairId)
                 }
                 return data
@@ -158,7 +149,6 @@ const PeerChat = (props: PeerChatProps) => {
     const callPeer = (peerId: string) => {
 
         if (peer) {
-            console.log("----------- calling peer ----------------")
             if (stream && peer) {
                 const call = peer.call(peerId, stream);
                 call.on('stream', (remoteStream) => {
@@ -177,7 +167,6 @@ const PeerChat = (props: PeerChatProps) => {
         if (peer) {
             const dataConn = peer.connect(peerId)
             dataConn.on("data", data => {
-                console.log("incomming data received", data)
                 const changes = data as ChangeObject
                 applyChange(editorRef, changes)
             })
@@ -185,9 +174,7 @@ const PeerChat = (props: PeerChatProps) => {
     }
 
     const applyChange = (editor: any, change: ChangeObject) => {
-        // Get the CodeMirror instance from the editor
-        console.log("editor passed to apply change function: ", editor)
-        console.log("changes", change)
+
         let cm;
         if (editor.current !== null) {
             cm = editor.current.editor;
@@ -195,17 +182,8 @@ const PeerChat = (props: PeerChatProps) => {
         else {
             cm = editorRef.current.editor
         }
-        console.log({cm})
 
-        //turn off the onChange listener
-        // const doc = cm.doc;
-        // const originalOnChange = doc.on('change');
-        // doc.off('change');
-
-        // Replace the text at the specified position
-        console.log("onchange listener off")
         try {
-
             cm.replaceRange(
                 change.text,
                 change.from,
@@ -216,10 +194,6 @@ const PeerChat = (props: PeerChatProps) => {
             console.log(err)
             console.log("error applying changes")
         }
-        console.log("changes complete")
-
-        // doc.on('change', originalOnChange);
-        console.log("update successful!")
     };
 
     return (

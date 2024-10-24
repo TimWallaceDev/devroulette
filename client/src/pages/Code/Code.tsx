@@ -3,18 +3,7 @@ import PeerChat from "../../components/PeerChat/PeerChat";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import { useRef, useState } from "react";
 import { template } from "../../components/CodeEditor/template.tsx";
-
-export interface CodeData {
-    author: string,
-    code: string
-}
-
-interface ChangeObject {
-    from: { line: number; ch: number };
-    to: { line: number; ch: number };
-    text: string;
-    removed: string;
-}
+import { CodeData, ChangeObject } from "../../interface.ts";
 
 
 export function Code() {
