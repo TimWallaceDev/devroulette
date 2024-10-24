@@ -193,6 +193,7 @@ const PeerChat = (props: PeerChatProps) => {
         }
         else {
             cm = editorRef.current.editor
+            console.log(cm)
         }
 
         //turn off the onChange listener
