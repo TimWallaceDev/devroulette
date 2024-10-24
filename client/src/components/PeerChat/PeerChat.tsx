@@ -187,6 +187,7 @@ const PeerChat = (props: PeerChatProps) => {
     const applyChange = (editor: any, change: ChangeObject) => {
         // Get the CodeMirror instance from the editor
         console.log("editor passed to apply change function: ", editor)
+        console.log("changes", change)
         let cm;
         if (editor.current !== null) {
             cm = editor.current.editor;
@@ -202,6 +203,7 @@ const PeerChat = (props: PeerChatProps) => {
         doc.off('change');
 
         // Replace the text at the specified position
+        console.log("onchange listener off")
         try {
 
             cm.replaceRange(
@@ -211,9 +213,12 @@ const PeerChat = (props: PeerChatProps) => {
             );
         } catch (err) {
             console.log(err)
+            console.log("error applying changes")
         }
+        console.log("changes complete")
 
         doc.on('change', originalOnChange);
+        console.log("update successful!")
     };
 
     return (
