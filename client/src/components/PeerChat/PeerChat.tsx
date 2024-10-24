@@ -23,7 +23,7 @@ const PeerChat = (props: PeerChatProps) => {
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
-    const { setCode, peerId, setPeerId, changes, editorRef } = props
+    const { peerId, setPeerId, changes, editorRef } = props
 
     useEffect(() => {
         if (dataConn) {
@@ -177,26 +177,35 @@ const PeerChat = (props: PeerChatProps) => {
         if (peer) {
             const dataConn = peer.connect(peerId)
             dataConn.on("data", data => {
+                console.log("incomming data received", data)
                 const changes = data as ChangeObject
                 applyChange(editorRef, changes)
             })
         }
     }
 
-    const applyChange = (editorRef: any, change: ChangeObject) => {
+    const applyChange = (editor: any, change: ChangeObject) => {
         // Get the CodeMirror instance from the editor
-        console.log(editorRef)
+        console.log(editor)
         let cm;
-        if (editorRef.current){
-            cm = editorRef.current.editor;
+        if (editor.current){
+            cm = editor.current.editor;
+        }
+        else {
+            cm = editorRef.current.editor
         }
 
         // Replace the text at the specified position
-        cm.replaceRange(
-            change.text,
-            change.from,
-            change.to
-        );
+        try {
+
+            cm.replaceRange(
+                change.text,
+                change.from,
+                change.to
+            );
+        }catch(err){
+            console.log(err)
+        }
     };
 
     return (
