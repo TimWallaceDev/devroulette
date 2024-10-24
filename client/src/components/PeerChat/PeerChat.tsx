@@ -188,13 +188,13 @@ const PeerChat = (props: PeerChatProps) => {
         // Get the CodeMirror instance from the editor
         console.log("editor passed to apply change function: ", editor)
         let cm;
-        if (editor.current) {
+        if (editor.current !== null) {
             cm = editor.current.editor;
         }
         else {
             cm = editorRef.current.editor
-            console.log(cm)
         }
+        console.log({cm})
 
         //turn off the onChange listener
         const doc = cm.getDoc();
