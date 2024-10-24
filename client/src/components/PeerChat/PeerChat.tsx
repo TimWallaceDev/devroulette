@@ -197,7 +197,7 @@ const PeerChat = (props: PeerChatProps) => {
         console.log({cm})
 
         //turn off the onChange listener
-        const doc = cm.getDoc();
+        const doc = cm.doc;
         const originalOnChange = doc.on('change');
         doc.off('change');
 
