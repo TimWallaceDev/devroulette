@@ -186,7 +186,7 @@ const PeerChat = (props: PeerChatProps) => {
 
     const applyChange = (editor: any, change: ChangeObject) => {
         // Get the CodeMirror instance from the editor
-        console.log(editor)
+        console.log("editor passed to apply change function: ", editor)
         let cm;
         if (editor.current) {
             cm = editor.current.editor;
