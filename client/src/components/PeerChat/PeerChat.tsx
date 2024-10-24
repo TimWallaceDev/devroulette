@@ -198,9 +198,9 @@ const PeerChat = (props: PeerChatProps) => {
         console.log({cm})
 
         //turn off the onChange listener
-        const doc = cm.doc;
-        const originalOnChange = doc.on('change');
-        doc.off('change');
+        // const doc = cm.doc;
+        // const originalOnChange = doc.on('change');
+        // doc.off('change');
 
         // Replace the text at the specified position
         console.log("onchange listener off")
@@ -218,7 +218,7 @@ const PeerChat = (props: PeerChatProps) => {
         }
         console.log("changes complete")
 
-        doc.on('change', originalOnChange);
+        // doc.on('change', originalOnChange);
         console.log("update successful!")
     };
 
