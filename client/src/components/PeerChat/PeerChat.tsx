@@ -188,12 +188,17 @@ const PeerChat = (props: PeerChatProps) => {
         // Get the CodeMirror instance from the editor
         console.log(editor)
         let cm;
-        if (editor.current){
+        if (editor.current) {
             cm = editor.current.editor;
         }
         else {
             cm = editorRef.current.editor
         }
+
+        //turn off the onChange listener
+        const doc = cm.getDoc();
+        const originalOnChange = doc.on('change');
+        doc.off('change');
 
         // Replace the text at the specified position
         try {
@@ -203,9 +208,11 @@ const PeerChat = (props: PeerChatProps) => {
                 change.from,
                 change.to
             );
-        }catch(err){
+        } catch (err) {
             console.log(err)
         }
+
+        doc.on('change', originalOnChange);
     };
 
     return (
