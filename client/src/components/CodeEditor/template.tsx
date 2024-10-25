@@ -1,13 +1,25 @@
 
 
-export const template = JSON.stringify(`
-    
-<html lang="en">
+export const template = JSON.stringify(
+`<html lang="en">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
     <style>
+    
+        ::-webkit-scrollbar {
+        width: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background-color: black
+        }
         body {
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
@@ -23,6 +35,4 @@ export const template = JSON.stringify(`
     <h1>Welcome to DevRoulette!</h1>
     <p>Edit the code here to get started!</p>
 </body>
-</html>
-
-`)
+</html>`)

@@ -1,0 +1,8 @@
+@use "../../styles/partials/variables.scss" as *;
+
+.iframe {
+    width: 50%;
+    border: 2px solid $primary-color;
+    border-radius: 8px;
+    
+}

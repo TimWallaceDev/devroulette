@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import "./darkmode.scss";
@@ -12,23 +12,7 @@ import { ChangeObject } from '../../interface';
 const CodeEditor = (props: CodeEditorProps) => {
     const { code, setCode, peerId, setChanges, editorRef } = props
 
-    useEffect(() => {
-
-        const iFrame = document.querySelector('.iframe') as HTMLIFrameElement
-        // iFrame.srcdoc = code.code
-        if (iFrame && iFrame.contentWindow) {
-
-            iFrame.style.opacity = "0"; // Hide iframe during update
-            const iframeDocument = iFrame.contentDocument || iFrame.contentWindow.document;
-
-            iframeDocument.open();
-            iframeDocument.write(code.code);
-            iframeDocument.close();
-
-            // Fade the iframe back in after the update
-            iFrame.style.opacity = "1";
-        }
-    })
+    const cursorPosRef = useRef<{line: number, ch: number} | null>(null);
 
     const getChangeSet = (change: ChangeObject) => {
         return {
@@ -42,7 +26,6 @@ const CodeEditor = (props: CodeEditorProps) => {
     return (
 
         <div className="code-editor">
-            <iframe className="iframe" title="Code Output" />
             <CodeMirror
                 ref={editorRef}
                 className='IDE'
@@ -68,6 +51,11 @@ const CodeEditor = (props: CodeEditorProps) => {
                         const changes = getChangeSet(data);
                         setChanges(changes)
                     }
+                }}
+                onCursorActivity={(editor) => {
+                    // Update cursor position reference
+                    const cursor = editor.getCursor();
+                    cursorPosRef.current = { line: cursor.line, ch: cursor.ch };
                 }}
             />
 

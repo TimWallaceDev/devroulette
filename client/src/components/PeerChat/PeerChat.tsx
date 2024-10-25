@@ -12,6 +12,7 @@ interface PeerChatProps {
     setPeerId: React.Dispatch<React.SetStateAction<string>>
     changes: ChangeObject | null,
     editorRef: React.MutableRefObject<any>
+    cursorPositionRef:React.MutableRefObject<any>
 }
 
 const PeerChat = (props: PeerChatProps) => {
@@ -23,7 +24,7 @@ const PeerChat = (props: PeerChatProps) => {
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
-    const { peerId, setPeerId, changes, editorRef } = props
+    const { peerId, setPeerId, changes, editorRef, cursorPositionRef } = props
 
     useEffect(() => {
         if (dataConn) {
@@ -173,26 +174,51 @@ const PeerChat = (props: PeerChatProps) => {
         }
     }
 
+    // Function to apply changes while preserving cursor position
     const applyChange = (editor: any, change: ChangeObject) => {
-
         let cm;
         if (editor.current !== null) {
             cm = editor.current.editor;
-        }
-        else {
-            cm = editorRef.current.editor
+        } else {
+            cm = editorRef.current.editor;
         }
 
         try {
-            cm.replaceRange(
-                change.text,
-                change.from,
-                change.to,
-                'remote'
-            );
+            // Store current cursor position before applying change
+            const cursor = cm.getCursor();
+            cursorPositionRef.current = { line: cursor.line, ch: cursor.ch };
+
+            // Apply the change
+            cm.operation(() => {
+                cm.replaceRange(
+                    change.text,
+                    change.from,
+                    change.to,
+                    'remote'
+                );
+
+                // Adjust cursor position if needed
+                if (cursorPositionRef.current) {
+                    // Only adjust if the change affects cursor position
+                    const changeEnd = change.to.line;
+                    const changeStart = change.from.line;
+                    const cursorLine = cursorPositionRef.current.line;
+
+                    if (cursorLine >= changeStart) {
+                        // Calculate line difference
+                        const lineDiff = change.text.length - (changeEnd - changeStart + 1);
+                        if (lineDiff !== 0 && cursorLine > changeEnd) {
+                            // Adjust cursor position based on line changes
+                            cm.setCursor({
+                                line: cursorLine + lineDiff,
+                                ch: cursorPositionRef.current.ch
+                            });
+                        }
+                    }
+                }
+            });
         } catch (err) {
-            console.log(err)
-            console.log("error applying changes")
+            console.error("Error applying changes:", err);
         }
     };
 
