@@ -3,6 +3,7 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import "./darkmode.scss";
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/htmlmixed/htmlmixed'
 import "./CodeEditor.scss";
 import { CodeEditorProps } from '../../interface';
 import { ChangeObject } from '../../interface';
@@ -49,8 +50,10 @@ const CodeEditor = (props: CodeEditorProps) => {
                 options={{
                     lineNumbers: true,
                     mode: 'htmlmixed',
-                    theme: '3024-night',
+                    theme: "3024-night",
+                    lineWrapping: true,
                 }}
+                
                 onBeforeChange={(editor, data: any, value: any) => {
                     editor;
                     data;
@@ -66,7 +69,6 @@ const CodeEditor = (props: CodeEditorProps) => {
                         setChanges(changes)
                     }
                 }}
-
             />
 
         </div>

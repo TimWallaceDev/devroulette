@@ -14,7 +14,7 @@ export const template = JSON.stringify(`
             padding: 8px;
             box-sizing: border-box;
             text-align: center;
-            background-color: #666;
+            background-color: rgb(50,50,50);
         }
     </style>
 </head>

@@ -1,0 +1,38 @@
+@use "../../styles/partials/variables.scss" as *;
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: $background-color;
+    min-height: 100vh;
+
+    &__heading {
+        font-size: 4rem;
+        color: $white;
+    }
+
+    &__subheading {
+        color: $white;
+        font-weight: normal;
+        font-style: italic;
+    }
+
+    &__button {
+        margin-top: 6rem;
+        padding: 1rem 4rem;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 50px;
+        border: none;
+        background-color: $primary-color;
+        color: $white;
+
+        &:hover {
+            background-color: $primary-color--hover;
+        }
+    }
+    
+}

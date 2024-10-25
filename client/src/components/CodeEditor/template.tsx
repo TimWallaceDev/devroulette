@@ -11,10 +11,11 @@ export const template = JSON.stringify(`
         body {
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
-            padding: 8px;
+            padding: 4rem;
             box-sizing: border-box;
             text-align: center;
-            background-color: #666;
+            background-color: rgb(50,50,50);
+            color: white;
         }
     </style>
 </head>

@@ -1,6 +1,12 @@
-
+@use "../../styles/partials/variables.scss" as *;
 
 .peerchat {
     display: flex;
     flex-direction: column;
+    border: 2px solid $primary-color;
+    border-radius: 8px;
+
+    &__video {
+        border-radius: 8px;
+    }
 }

@@ -1,15 +1,16 @@
 import { Link } from "react-router-dom";
+import "./Home.scss"
 
 
 export function Home(){
 
     return(
-        <main>
+        <main className="hero">
 
-            <h1>DevRoulette</h1>
-            <h2>Ephemeral Coding Sessions</h2>
+            <h1 className="hero__heading">DevRoulette</h1>
+            <h2 className="hero__subheading">Ephemeral Pair Programming Sessions</h2>
             <Link to="/code">
-                <button>Join a Room</button>
+                <button className="hero__button">Code Now</button>
             </Link>
         </main>
     )

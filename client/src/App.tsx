@@ -1,5 +1,5 @@
 
-import './App.css'
+import './App.scss'
 // import PeerChat from './components/PeerChat/PeerChat'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Home } from './pages/Home/Home'

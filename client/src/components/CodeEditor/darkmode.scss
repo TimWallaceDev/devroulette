@@ -8,13 +8,18 @@
 
 */
 
+@use "../../styles/partials/variables.scss" as *;
+
 .cm-s-3024-night.CodeMirror {
-    background: #090300;
+    background: $background-color;
     color: #d6d5d4;
+    border: 2px solid $primary-color;
+    border-radius: 8px;
+    
 }
 
 .cm-s-3024-night div.CodeMirror-selected {
-    background: #3a3432;
+    background: #726b69;
 }
 
 .cm-s-3024-night .CodeMirror-line::selection,

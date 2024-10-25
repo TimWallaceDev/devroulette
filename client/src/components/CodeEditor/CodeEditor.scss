@@ -1,12 +1,18 @@
+@use "../../styles/partials/variables.scss" as *;
+
 .code-editor {
     display: flex;
-    // flex-direction: column;
-    min-height: calc(100vh - 8px);
+    min-height: calc(100vh);
 }
 
 .iframe {
-    width: 100%;
-    flex: 1;
+    width: 50%;
+    border: 2px solid $primary-color;
+    border-radius: 8px;
+}
+
+.react-codemirror2 {
+    width: 50%;
 }
 
 .CodeMirror {

@@ -1,11 +1,8 @@
+@use "../../styles/partials/variables.scss" as *;
+
 .code {
     display: flex;
-    background-color: black;
-}
-
-div {
-    margin: 0;
-    padding: 0;
+    background-color: $background-color;
 }
 
 .editor {
