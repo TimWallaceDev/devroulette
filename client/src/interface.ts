@@ -24,3 +24,13 @@ export interface ChangeObject {
     text: string;
     removed: string;
 }
+
+export interface PeerChatProps {
+    code: CodeData,
+    setCode: React.Dispatch<React.SetStateAction<CodeData>>,
+    peerId: string,
+    setPeerId: React.Dispatch<React.SetStateAction<string>>
+    changes: ChangeObject | null,
+    editorRef: React.MutableRefObject<any>
+    cursorPositionRef:React.MutableRefObject<any>
+}

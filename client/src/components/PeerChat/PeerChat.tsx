@@ -2,18 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import axios from "axios"
 import "./PeerChat.scss";
-import { CodeData } from '../../interface';
-import { ChangeObject } from '../../interface';
-
-interface PeerChatProps {
-    code: CodeData,
-    setCode: React.Dispatch<React.SetStateAction<CodeData>>,
-    peerId: string,
-    setPeerId: React.Dispatch<React.SetStateAction<string>>
-    changes: ChangeObject | null,
-    editorRef: React.MutableRefObject<any>
-    cursorPositionRef:React.MutableRefObject<any>
-}
+import { ChangeObject, PeerChatProps } from '../../interface';
 
 const PeerChat = (props: PeerChatProps) => {
     const [peer, setPeer] = useState<Peer | null>(null);
@@ -24,7 +13,7 @@ const PeerChat = (props: PeerChatProps) => {
     const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
 
-    const { peerId, setPeerId, changes, editorRef, cursorPositionRef } = props
+    const { peerId, setPeerId, changes, editorRef } = props
 
     useEffect(() => {
         if (dataConn) {
@@ -44,6 +33,7 @@ const PeerChat = (props: PeerChatProps) => {
                 }
             } catch (err) {
                 console.error("Error accessing media devices:", err);
+                //TODO, add placeholder for video
             }
         }
 
@@ -66,6 +56,8 @@ const PeerChat = (props: PeerChatProps) => {
                 }
             }); // Create a new Peer instance
 
+            //TODO check for symmetrical NAT
+
             newPeer.on('open', async (id) => {
                 setPeerId(id); // Set the peer ID when the peer is opened
             });
@@ -84,7 +76,7 @@ const PeerChat = (props: PeerChatProps) => {
                     // Properly set the remote stream for the video element
                     if (remoteVideoRef.current) {
                         remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
-                        remoteVideoRef.current.muted = true
+                        remoteVideoRef.current.muted = false
                     }
                     else {
                         console.log("no remote video ref")
@@ -133,6 +125,7 @@ const PeerChat = (props: PeerChatProps) => {
                 return data
             } catch (err) {
                 console.log(err)
+                //TODO add error message
             }
         }
         checkPairServer(peerId)
@@ -184,9 +177,6 @@ const PeerChat = (props: PeerChatProps) => {
         }
 
         try {
-            // Store current cursor position before applying change
-            const cursor = cm.getCursor();
-            cursorPositionRef.current = { line: cursor.line, ch: cursor.ch };
 
             // Apply the change
             cm.operation(() => {
@@ -196,26 +186,6 @@ const PeerChat = (props: PeerChatProps) => {
                     change.to,
                     'remote'
                 );
-
-                // Adjust cursor position if needed
-                if (cursorPositionRef.current) {
-                    // Only adjust if the change affects cursor position
-                    const changeEnd = change.to.line;
-                    const changeStart = change.from.line;
-                    const cursorLine = cursorPositionRef.current.line;
-
-                    if (cursorLine >= changeStart) {
-                        // Calculate line difference
-                        const lineDiff = change.text.length - (changeEnd - changeStart + 1);
-                        if (lineDiff !== 0 && cursorLine > changeEnd) {
-                            // Adjust cursor position based on line changes
-                            cm.setCursor({
-                                line: cursorLine + lineDiff,
-                                ch: cursorPositionRef.current.ch
-                            });
-                        }
-                    }
-                }
             });
         } catch (err) {
             console.error("Error applying changes:", err);
