@@ -10,7 +10,7 @@ import { useRef } from 'react';
 
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const { code, setCode, setChanges, editorRef } = props
+    const { setCode, setChanges, editorRef } = props
 
     const currentChange = useRef(0)
 
@@ -31,7 +31,7 @@ const CodeEditor = (props: CodeEditorProps) => {
                 
                 ref={editorRef}
                 className='IDE'
-                value={code.code}
+                // value={code.code}
                 options={{
                     lineNumbers: true,
                     mode: 'htmlmixed',
