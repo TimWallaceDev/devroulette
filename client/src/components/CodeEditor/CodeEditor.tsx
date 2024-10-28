@@ -10,7 +10,7 @@ import { useRef } from 'react';
 
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const { code, setChanges, editorRef } = props
+    const { code, setCode, setChanges, editorRef } = props
 
     const currentChange = useRef(0)
 
@@ -46,6 +46,7 @@ const CodeEditor = (props: CodeEditorProps) => {
                         const changes = getChangeSet(data);
                         setChanges(changes)
                     }
+                    setCode({author: "me", code: value})
                 }}
             />
         </div>
