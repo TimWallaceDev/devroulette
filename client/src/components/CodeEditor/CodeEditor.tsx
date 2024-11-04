@@ -6,13 +6,11 @@ import 'codemirror/mode/htmlmixed/htmlmixed'
 import "./CodeEditor.scss";
 import { CodeEditorProps } from '../../interface';
 import { ChangeObject } from '../../interface';
-import { useRef } from 'react';
+import { useEffect } from 'react';
 
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const { setCode, setChanges, editorRef } = props
-
-    const currentChange = useRef(0)
+    const {code,  setCode, setChanges, editorRef } = props
 
     const getChangeSet = (change: ChangeObject) => {
         return {
@@ -20,7 +18,6 @@ const CodeEditor = (props: CodeEditorProps) => {
             to: { line: change.to.line, ch: change.to.ch },
             text: change.text,
             removed: change.removed,
-            id: currentChange.current
         };
     };
 
@@ -28,10 +25,9 @@ const CodeEditor = (props: CodeEditorProps) => {
 
         <div className="code-editor">
             <CodeMirror
-                
+                // value = {code.code}
                 ref={editorRef}
                 className='IDE'
-                // value={code.code}
                 options={{
                     lineNumbers: true,
                     mode: 'htmlmixed',
@@ -46,6 +42,7 @@ const CodeEditor = (props: CodeEditorProps) => {
                         const changes = getChangeSet(data);
                         setChanges(changes)
                     }
+                    console.log(data)
                     setCode({author: "me", code: value})
                 }}
             />
