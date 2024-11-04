@@ -6,11 +6,10 @@ import 'codemirror/mode/htmlmixed/htmlmixed'
 import "./CodeEditor.scss";
 import { CodeEditorProps } from '../../interface';
 import { ChangeObject } from '../../interface';
-import { useEffect } from 'react';
 
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const {code,  setCode, setChanges, editorRef } = props
+    const {setCode, setChanges, editorRef } = props
 
     const getChangeSet = (change: ChangeObject) => {
         return {

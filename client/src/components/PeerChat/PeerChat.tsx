@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import Peer, { DataConnection, MediaConnection } from "peerjs";
+import { useEffect, useState } from "react";
+import Peer, { DataConnection } from "peerjs";
 import axios from "axios";
 import "./PeerChat.scss";
 import { ChangeObject, PeerChatProps } from "../../interface";
