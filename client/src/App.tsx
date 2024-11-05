@@ -15,7 +15,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home setUsername={setUsername}/>}></Route>
       {/* <Route path="/chat" element={<PeerChat code={""} setCode={()}/>}></Route> */}
-      <Route path="/code" element={<Code username={username}/>}></Route>
+      <Route path="/code" element={<Code username={username} setUsername={setUsername}/>}></Route>
     </Routes>
     </BrowserRouter>
   )

@@ -12,12 +12,12 @@ const CodeEditor = (props: CodeEditorProps) => {
 
     const getChangeSet = (change: ChangeObject) => {
         return {
-            from: { line: change.from.line, ch: change.from.ch },
-            to: { line: change.to.line, ch: change.to.ch },
-            text: change.text,
-            removed: change.removed,
+          from: { line: change.from.line, ch: change.from.ch },
+          to: { line: change.to.line, ch: change.to.ch },
+          text: change.text, // Join the text array into a single string with newlines
+          removed: change.removed, // Join the removed text array into a single string with newlines
         };
-    };
+      };
 
     return (
 
@@ -32,14 +32,16 @@ const CodeEditor = (props: CodeEditorProps) => {
                     mode: 'htmlmixed',
                     theme: "3024-night",
                     lineWrapping: true,
+                    indentAuto: false,
+                    smartIndent: false
                 }}
                 onChange={(editor, data, value) => {
                     // data contains the change information
                     editor;
                     value;
                     if (data.origin !== 'remote') {
-                        const changes = getChangeSet(data);
-                        setChanges(changes)
+                        const changes = getChangeSet(data) as ChangeObject;
+                        setChanges(prev => [...prev, changes])
                     }
                     codeRef.current = {author: "me", code: value}
                 }}

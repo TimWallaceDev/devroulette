@@ -11,7 +11,6 @@ export function Home(props: HomeProps) {
     async function signIn(){
         try{
             const username = await signInWithGoogle()
-            console.log({username})
             setUsername(username)
             navigate("/code")
 

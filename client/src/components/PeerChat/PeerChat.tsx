@@ -12,12 +12,21 @@ const PeerChat = (props: PeerChatProps) => {
   const [pairUsername, setPairUsername] = useState<string | null>(null);
   const [dataConn, setDataConn] = useState<DataConnection | null>(null);
   const first = useRef(false);
+  const processing = useRef<boolean>(false);
 
-  const { username, codeRef, peerId, setPeerId, changes, editorRef } = props;
+  const { username, codeRef, peerId, setPeerId, changes, setChanges, editorRef } = props;
 
   useEffect(() => {
-    if (dataConn) {
-      dataConn.send(changes);
+    if (processing.current){
+      return
+    }
+
+    if (dataConn && changes.length > 0) {
+      processing.current = true
+      const [firstChange, ...restOfChanges] = changes
+      dataConn.send(firstChange);
+      setChanges(restOfChanges)
+      processing.current = false
     }
   }, [changes]);
 
@@ -44,14 +53,12 @@ const PeerChat = (props: PeerChatProps) => {
       newPeer.on("connection", (conn) => {
         console.log("Data connection established for code sync");
         conn.on("data", (data: unknown) => {
-          console.log("imcomming");
           const change = data as ChangeObject;
           applyChange(editorRef, change);
         });
 
         conn.on("open", () => {
           if (first.current) {
-            console.log("need to send mi code", codeRef.current.code);
             conn.send({
               from: {
                 line: 0,
@@ -128,7 +135,6 @@ const PeerChat = (props: PeerChatProps) => {
     if (peer) {
       const dataConn = peer.connect(peerId);
       dataConn.on("data", (data) => {
-        console.log("incoming");
         const changes = data as ChangeObject;
         applyChange(editorRef, changes);
       });
