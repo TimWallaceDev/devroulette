@@ -1,3 +1,11 @@
+export interface HomeProps{
+    setUsername: React.Dispatch<React.SetStateAction<string | null>>
+}
+
+export interface CodeProps{
+    username: string | null
+}
+
 export interface ChangeObject {
     from: { line: number; ch: number };
     to: { line: number; ch: number };
@@ -6,11 +14,10 @@ export interface ChangeObject {
 }
 
 export interface CodeEditorProps {
-    code: CodeData,
-    setCode: React.Dispatch<React.SetStateAction<CodeData>>
     peerId: string
     setChanges: React.Dispatch<React.SetStateAction<ChangeObject | null>>
     editorRef: React.MutableRefObject<any>
+    codeRef: React.MutableRefObject<any>
 }
 
 export interface CodeData {
@@ -26,11 +33,10 @@ export interface ChangeObject {
 }
 
 export interface PeerChatProps {
-    code: CodeData,
-    setCode: React.Dispatch<React.SetStateAction<CodeData>>,
     peerId: string,
     setPeerId: React.Dispatch<React.SetStateAction<string>>
     changes: ChangeObject | null,
     editorRef: React.MutableRefObject<any>
-    cursorPositionRef:React.MutableRefObject<any>
+    codeRef:React.MutableRefObject<any>
+    username: string
 }

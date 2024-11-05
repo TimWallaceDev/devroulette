@@ -1,17 +1,36 @@
-import { Link } from "react-router-dom";
-import "./Home.scss"
+import { Link, useNavigate } from "react-router-dom";
+import "./Home.scss";
+import { signInWithGoogle } from "../../functions/signInWithGoogle";
+import { HomeProps } from "../../interface";
 
+export function Home(props: HomeProps) {
 
-export function Home(){
+    const setUsername = props.setUsername
+    const navigate = useNavigate()
 
-    return(
-        <main className="hero">
+    async function signIn(){
+        try{
+            const username = await signInWithGoogle()
+            console.log({username})
+            setUsername(username)
+            navigate("/code")
 
-            <h1 className="hero__heading">DevRoulette</h1>
-            <h2 className="hero__subheading">Ephemeral Pair Programming Sessions</h2>
-            <Link to="/code">
-                <button className="hero__button">Code Now</button>
-            </Link>
-        </main>
-    )
+        }catch{
+            console.log("unable to sign in")
+        }
+    }
+    
+  return (
+    <main className="hero">
+      <h1 className="hero__heading">DevRoulette</h1>
+      <h2 className="hero__subheading">Ephemeral Pair Programming Sessions</h2>
+      <>welcome</>
+      <Link to="/code">
+        <button className="hero__button">Code Now</button>
+      </Link>
+      <button className="hero__button" onClick={signIn}>
+        sign in with google
+      </button>
+    </main>
+  );
 }

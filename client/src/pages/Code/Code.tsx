@@ -2,31 +2,29 @@ import "./Code.scss";
 import PeerChat from "../../components/PeerChat/PeerChat";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import { useRef, useState } from "react";
-import { template } from "../../components/CodeEditor/template.tsx";
-import { CodeData, ChangeObject } from "../../interface.ts";
+import { CodeData, ChangeObject, CodeProps } from "../../interface.ts";
 import { Iframe } from "../../components/Iframe/Iframe.tsx";
 
 
-export function Code() {
+export function Code(props: CodeProps) {
+
+    const username = props.username
 
     const [peerId, setPeerId] = useState('');
-
-    const [code, setCode] = useState<CodeData>({ author: "default", code: JSON.parse(template) });
-
     const [changes, setChanges] = useState<ChangeObject | null>(null)
 
+    const code = useRef<CodeData>({ author: "default", code:"" });
     const editorRef = useRef<any>();
-    const cursorPosRef = useRef<{ line: number, ch: number } | null>(null);
 
     return (
         <main className="code">
 
-            <Iframe code={code} />
+            <Iframe code={code.current} />
 
             <div className="editor">
                 <CodeEditor 
-                code={code} 
-                setCode={setCode} 
+                // code={code.current} 
+                codeRef={code} 
                 peerId={peerId} 
                 setChanges={setChanges} 
                 editorRef={editorRef} 
@@ -34,13 +32,13 @@ export function Code() {
             </div>
             <div className="chat">
                 <PeerChat
-                    code={code}
-                    setCode={setCode}
+                    // code={code.current}
+                    codeRef={code}
                     peerId={peerId}
                     setPeerId={setPeerId}
                     changes={changes}
                     editorRef={editorRef}
-                    cursorPositionRef={cursorPosRef}
+                    username={username}
                 />
             </div>
         </main>
