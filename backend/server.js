@@ -52,7 +52,7 @@ app.post("/pair", (req, res) => {
     }
     else {
         const pair = queue.pop()
-        res.status(200).json({message: "You've been matched", pairId: pair.pairId, pairUsername: pair.username})
+        res.status(200).json({message: "You've been matched", pairId: pair.peerId, pairUsername: pair.username})
     }
 })
 
