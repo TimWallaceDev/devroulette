@@ -95,7 +95,7 @@ const PeerChat = (props: PeerChatProps) => {
       try {
         const response = await axios.post("https://devroulette.com/pair", {
           peerId: peerId,
-          username: username
+          username: username,
         });
         const data = response.data;
         if (data.message == "You're first in line") {
@@ -104,7 +104,7 @@ const PeerChat = (props: PeerChatProps) => {
           initializeCode(editorRef);
         } else if (data.message == "You've been matched") {
           setPairId(data.pairId);
-          setPairUsername(data.pairUsername)
+          setPairUsername(data.pairUsername);
         }
         return data;
       } catch (err) {
@@ -112,7 +112,9 @@ const PeerChat = (props: PeerChatProps) => {
         //TODO add error message
       }
     }
-    checkPairServer(peerId, username);
+    if (username) {
+      checkPairServer(peerId, username);
+    }
   }, [peerId]);
 
   useEffect(() => {
@@ -142,7 +144,9 @@ const PeerChat = (props: PeerChatProps) => {
       </div>
       <div className="online-user">
         <span className="online-user__status"></span>
-        <span className="online-user__username">PARTNER: {pairUsername ? pairUsername : "looking for partner"}</span>
+        <span className="online-user__username">
+          PARTNER: {pairUsername ? pairUsername : "looking for partner"}
+        </span>
       </div>
     </div>
   );

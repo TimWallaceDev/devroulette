@@ -38,5 +38,5 @@ export interface PeerChatProps {
     changes: ChangeObject | null,
     editorRef: React.MutableRefObject<any>
     codeRef:React.MutableRefObject<any>
-    username: string
+    username: string | null
 }
