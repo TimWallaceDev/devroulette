@@ -1,6 +1,7 @@
 // server.js
 const { PeerServer } = require('peer');
 const express = require('express');
+const cors = require('cors')
 
 const peerServer = PeerServer({
     port: 9000,   // Server will run on port 9000
@@ -29,6 +30,7 @@ const app = express()
 const PORT = process.env.PORT || 9001
 
 app.use(express.json())
+app.use(cors())
 
 const queue = []
 
@@ -50,7 +52,7 @@ app.post("/pair", (req, res) => {
     }
     else {
         const pair = queue.pop()
-        res.status(200).json({message: "You've been matched", pairId: pair, pairUsername: pair.username})
+        res.status(200).json({message: "You've been matched", pairId: pair.pairId, pairUsername: pair.username})
     }
 })
 

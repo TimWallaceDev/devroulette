@@ -4,11 +4,17 @@ import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import { useRef, useState } from "react";
 import { CodeData, ChangeObject, CodeProps } from "../../interface.ts";
 import { Iframe } from "../../components/Iframe/Iframe.tsx";
+import { useNavigate } from "react-router-dom";
 
 
 export function Code(props: CodeProps) {
 
     const username = props.username
+    const navigate = useNavigate()
+
+    if (!username){
+        navigate("/")
+    }
 
     const [peerId, setPeerId] = useState('');
     const [changes, setChanges] = useState<ChangeObject | null>(null)
