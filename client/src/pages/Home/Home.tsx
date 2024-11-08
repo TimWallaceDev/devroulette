@@ -23,10 +23,6 @@ export function Home(props: HomeProps) {
     <main className="hero">
       <h1 className="hero__heading">DevRoulette</h1>
       <h2 className="hero__subheading">Ephemeral Pair Programming Sessions</h2>
-      <>welcome</>
-      <Link to="/code">
-        <button className="hero__button">Code Now</button>
-      </Link>
       <button className="hero__button" onClick={signIn}>
         sign in with google
       </button>

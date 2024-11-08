@@ -30,24 +30,24 @@ export function Code(props: CodeProps) {
   const [changes, setChanges] = useState<ChangeObject[]>([]);
 
   const code = useRef<CodeData>({ author: "default", code: "" });
+  const [codeTrigger, setCodeTrigger] = useState<boolean>(false)
   const editorRef = useRef<any>();
 
   return (
     <main className="code">
-      <Iframe code={code.current} />
+      <Iframe code={code} codeTrigger={codeTrigger}/>
 
       <div className="editor">
         <CodeEditor
-          // code={code.current}
           codeRef={code}
           peerId={peerId}
           setChanges={setChanges}
+          setCodeTrigger={setCodeTrigger}
           editorRef={editorRef}
         />
       </div>
       <div className="chat">
         <PeerChat
-          // code={code.current}
           codeRef={code}
           peerId={peerId}
           setPeerId={setPeerId}

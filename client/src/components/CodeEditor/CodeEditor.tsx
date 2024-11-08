@@ -8,7 +8,8 @@ import { CodeEditorProps } from '../../interface';
 import { ChangeObject } from '../../interface';
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const { codeRef, setChanges, editorRef } = props
+    const { codeRef, setCodeTrigger, setChanges, editorRef } = props
+
 
     const getChangeSet = (change: ChangeObject) => {
         return {
@@ -26,7 +27,6 @@ const CodeEditor = (props: CodeEditorProps) => {
                 
                 ref={editorRef}
                 className='IDE'
-                // value={code.code}
                 options={{
                     lineNumbers: true,
                     mode: 'htmlmixed',
@@ -36,7 +36,6 @@ const CodeEditor = (props: CodeEditorProps) => {
                     smartIndent: false
                 }}
                 onChange={(editor, data, value) => {
-                    // data contains the change information
                     editor;
                     value;
                     if (data.origin !== 'remote') {
@@ -44,6 +43,7 @@ const CodeEditor = (props: CodeEditorProps) => {
                         setChanges(prev => [...prev, changes])
                     }
                     codeRef.current = {author: "me", code: value}
+                    setCodeTrigger(prev => !prev)
                 }}
             />
         </div>

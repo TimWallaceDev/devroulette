@@ -3,12 +3,13 @@ import { CodeData } from "../../interface"
 import "./Iframe.scss"
 
 interface IframeProps {
-    code: CodeData
+    code: React.MutableRefObject<CodeData>,
+    codeTrigger: boolean
 }
 
 export function Iframe(props:IframeProps){
 
-    const { code } = props
+    const { code, codeTrigger } = props
     const iFrame = document.querySelector('.iframe') as HTMLIFrameElement
 
     useEffect(() => {
@@ -20,13 +21,13 @@ export function Iframe(props:IframeProps){
             const iframeDocument = iFrame.contentDocument || iFrame.contentWindow.document;
 
             iframeDocument.open();
-            iframeDocument.write(code.code);
+            iframeDocument.write(code.current.code);
             iframeDocument.close();
 
             // Fade the iframe back in after the update
             iFrame.style.opacity = "1";
         }
-    }, [code, iFrame])
+    }, [codeTrigger, iFrame])
 
     return (
         <iframe className="iframe" title="Code Output" />

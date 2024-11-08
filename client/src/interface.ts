@@ -19,6 +19,7 @@ export interface CodeEditorProps {
     setChanges: React.Dispatch<React.SetStateAction<ChangeObject[]>>
     editorRef: React.MutableRefObject<any>
     codeRef: React.MutableRefObject<any>
+    setCodeTrigger: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface CodeData {
