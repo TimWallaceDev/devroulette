@@ -5,6 +5,7 @@ import "./PeerChat.scss";
 import { ChangeObject, PeerChatProps } from "../../interface";
 import { applyChange } from "../../functions/applyChanges";
 import { initializeCode } from "../../functions/initializeCode";
+import { ProjectSuggestion } from "../ProjectSuggestion/ProjectSuggestion";
 
 const PeerChat = (props: PeerChatProps) => {
   const [peer, setPeer] = useState<Peer | null>(null);
@@ -14,24 +15,33 @@ const PeerChat = (props: PeerChatProps) => {
   const first = useRef(false);
   const processing = useRef<boolean>(false);
 
-  const { username, codeRef, peerId, setPeerId, changes, setChanges, editorRef } = props;
+  const {
+    username,
+    codeRef,
+    peerId,
+    setPeerId,
+    changes,
+    setChanges,
+    editorRef,
+  } = props;
 
   useEffect(() => {
-    if (processing.current){
-      return
+    if (processing.current) {
+      return;
     }
 
     if (dataConn && changes.length > 0) {
-      processing.current = true
-      const [firstChange, ...restOfChanges] = changes
+      processing.current = true;
+      const [firstChange, ...restOfChanges] = changes;
       dataConn.send(firstChange);
-      setChanges(restOfChanges)
-      processing.current = false
+      setChanges(restOfChanges);
+      processing.current = false;
     }
   }, [changes]);
 
   useEffect(() => {
     function setupCall() {
+      console.log("inside setupcall");
       const newPeer = new Peer({
         host: "devroulette.com",
         path: "/myapp",
@@ -46,6 +56,7 @@ const PeerChat = (props: PeerChatProps) => {
       //TODO check for symmetrical NAT
 
       newPeer.on("open", async (id) => {
+        console.log("Opened new peer");
         setPeerId(id); // Set the peer ID when the peer is opened
       });
 
@@ -84,20 +95,29 @@ const PeerChat = (props: PeerChatProps) => {
         setPairId(conn.peer);
       });
 
+      newPeer.on("close", () => {
+        newPeer.destroy();
+      });
+
       setPeer(newPeer); // Set the peer instance to state
+      console.log("new peer set");
       // Cleanup on component unmount
-      return () => {
-        newPeer.destroy(); // Destroy the peer when the component is unmounted
-      };
+      return newPeer;
     }
 
-    setupCall();
+    const newPeer = setupCall();
+
+    return () => {
+      console.log("cleaning up peer");
+      newPeer.destroy(); // Destroy the peer when the component is unmounte
+    };
   }, []);
 
   useEffect(() => {
-    if (!peer || !peerId) {
+    if (!peer || !peerId || !username) {
       return;
     }
+    console.log("checking pair server");
     async function checkPairServer(peerId: string, username: string) {
       try {
         const response = await axios.post("https://devroulette.com/pair", {
@@ -110,6 +130,7 @@ const PeerChat = (props: PeerChatProps) => {
           console.log("first");
           initializeCode(editorRef);
         } else if (data.message == "You've been matched") {
+          console.log("youve been matcheds");
           setPairId(data.pairId);
           setPairUsername(data.pairUsername);
         }
@@ -119,16 +140,16 @@ const PeerChat = (props: PeerChatProps) => {
         //TODO add error message
       }
     }
-    if (username) {
-      checkPairServer(peerId, username);
-    }
-  }, [peerId]);
+
+    checkPairServer(peerId, username);
+  }, [peerId, username]);
 
   useEffect(() => {
     if (!pairId) {
       return;
     }
     createDataConnection(pairId);
+    // TODO
   }, [pairId]);
 
   function createDataConnection(peerId: string) {
@@ -142,18 +163,39 @@ const PeerChat = (props: PeerChatProps) => {
     }
   }
 
+  function next() {
+    window.location.reload();
+  }
+
   return (
     <div className="peerchat">
-      <div className="online-user">
-        <span className="online-user__status"></span>
-        <span className="online-user__username">YOU: {username}</span>
+
+
+      <div className="users">
+        <h3 className="users__heading">Current Users: </h3>
+        <div className="online-user">
+          <span className="online-user__status"></span>
+          <span className="online-user__username">{username}</span>
+        </div>
+        <div className="online-user">
+          <span
+            className={
+              pairUsername
+                ? "online-user__status"
+                : "online-user__status online-user__status--offline"
+            }
+          ></span>
+          <span className="online-user__username">
+            {pairUsername ? pairUsername : "looking for partner"}
+          </span>
+        </div>
       </div>
-      <div className="online-user">
-        <span className="online-user__status"></span>
-        <span className="online-user__username">
-          PARTNER: {pairUsername ? pairUsername : "looking for partner"}
-        </span>
-      </div>
+
+      <ProjectSuggestion />
+
+      <button onClick={next} className="next-dev">
+        Next Dev
+      </button>
     </div>
   );
 };

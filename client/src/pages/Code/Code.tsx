@@ -6,9 +6,10 @@ import { CodeData, ChangeObject, CodeProps } from "../../interface.ts";
 import { Iframe } from "../../components/Iframe/Iframe.tsx";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export function Code(props: CodeProps) {
-  const {username, setUsername} = props;
+  const { username, setUsername } = props;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,33 +31,43 @@ export function Code(props: CodeProps) {
   const [changes, setChanges] = useState<ChangeObject[]>([]);
 
   const code = useRef<CodeData>({ author: "default", code: "" });
-  const [codeTrigger, setCodeTrigger] = useState<boolean>(false)
+  const [codeTrigger, setCodeTrigger] = useState<boolean>(false);
   const editorRef = useRef<any>();
 
   return (
     <main className="code">
-      <Iframe code={code} codeTrigger={codeTrigger}/>
-
-      <div className="editor">
-        <CodeEditor
-          codeRef={code}
-          peerId={peerId}
-          setChanges={setChanges}
-          setCodeTrigger={setCodeTrigger}
-          editorRef={editorRef}
-        />
-      </div>
-      <div className="chat">
-        <PeerChat
-          codeRef={code}
-          peerId={peerId}
-          setPeerId={setPeerId}
-          changes={changes}
-          setChanges={setChanges}
-          editorRef={editorRef}
-          username={username}
-        />
-      </div>
+      <PanelGroup autoSaveId="example" direction="horizontal">
+        <Panel>
+          <Iframe code={code} codeTrigger={codeTrigger} />
+        </Panel>
+        <PanelResizeHandle />
+        <Panel>
+          <div className="editor">
+            <CodeEditor
+              codeRef={code}
+              peerId={peerId}
+              setChanges={setChanges}
+              setCodeTrigger={setCodeTrigger}
+              editorRef={editorRef}
+            />
+          </div>
+        </Panel>
+        <PanelResizeHandle style={{ width: "2px", backgroundColor: "black" }} />
+        <Panel defaultSize={25}>
+          <div className="chat">
+            <PeerChat
+              codeRef={code}
+              peerId={peerId}
+              setPeerId={setPeerId}
+              changes={changes}
+              setChanges={setChanges}
+              editorRef={editorRef}
+              username={username}
+            />
+          </div>
+        </Panel>
+      </PanelGroup>
+      ;
     </main>
   );
 }
