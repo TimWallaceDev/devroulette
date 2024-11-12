@@ -48,15 +48,28 @@ const PeerChat = (props: PeerChatProps) => {
         secure: true,
         config: {
           iceServers: [
-            { url: "stun:stun.l.google.com:19302" },
             {
-              urls: [
-                "turn:143.110.223.15:3478",
-                "turn:143.110.223.15:3478?transport=tcp",
-                "turns:143.110.223.15:5349",
-              ],
-              username: "dev",
-              credential: "roulette",
+              urls: "stun:stun.relay.metered.ca:80",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:80",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:80?transport=tcp",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:443",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+            {
+              urls: "turns:global.relay.metered.ca:443?transport=tcp",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
             },
           ],
         },
