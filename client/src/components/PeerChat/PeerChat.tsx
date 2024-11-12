@@ -49,7 +49,7 @@ const PeerChat = (props: PeerChatProps) => {
         config: {
           iceServers: [
             { url: "stun:stun.l.google.com:19302" },
-            { url: 'turn:143.110.223.15:3478', credential: 'dev:roulette' }
+            { url: 'turn:143.110.223.15:3478', username:"dev", credential: 'roulette' }
           ],
         },
       }); // Create a new Peer instance
