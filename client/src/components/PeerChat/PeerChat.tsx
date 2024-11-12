@@ -48,7 +48,8 @@ const PeerChat = (props: PeerChatProps) => {
         // secure: true,
         config: {
           iceServers: [
-            { url: "stun:stun.l.google.com:19302" }, // A commonly used free STUN server
+            { url: "stun:stun.l.google.com:19302" },
+            { url: 'turn:143.110.223.15:3478', credential: 'dev:roulette' }
           ],
         },
       }); // Create a new Peer instance
