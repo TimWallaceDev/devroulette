@@ -1,0 +1,15 @@
+@use "../../styles/partials/variables.scss" as *;
+
+.code {
+    display: flex;
+    background-color: $background-color;
+
+}
+
+.iframe {
+    flex: 1;
+}
+
+.editor {
+    flex: 1;
+}

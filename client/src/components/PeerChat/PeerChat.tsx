@@ -1,181 +1,223 @@
-import { useEffect, useRef, useState } from 'react';
-import Peer, { DataConnection, MediaConnection } from 'peerjs';
+import { useEffect, useRef, useState } from "react";
+import Peer, { DataConnection } from "peerjs";
+import axios from "axios";
+import "./PeerChat.scss";
+import { ChangeObject, PeerChatProps } from "../../interface";
+import { applyChange } from "../../functions/applyChanges";
+import { initializeCode } from "../../functions/initializeCode";
+import { ProjectSuggestion } from "../ProjectSuggestion/ProjectSuggestion";
 
-const PeerChat = () => {
-    const [peerId, setPeerId] = useState('');
-    const [peer, setPeer] = useState<Peer | null>(null);
-    const [messages, setMessages] = useState<string[]>([]);
-    const [connection, setConnection] = useState<DataConnection | null>(null);
-    const [stream, setStream] = useState<MediaStream | null>(null)
-    // const [remoteStream, setRemoteStream] = useState<MediaConnection | null>(null)
+const PeerChat = (props: PeerChatProps) => {
+  const [peer, setPeer] = useState<Peer | null>(null);
+  const [pairId, setPairId] = useState<string | null>(null);
+  const [pairUsername, setPairUsername] = useState<string | null>(null);
+  const [dataConn, setDataConn] = useState<DataConnection | null>(null);
+  const first = useRef(false);
+  const processing = useRef<boolean>(false);
 
-    const localVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the local video element
-    const remoteVideoRef = useRef<HTMLVideoElement | null>(null); // Reference for the remote video element
+  const {
+    username,
+    codeRef,
+    peerId,
+    setPeerId,
+    changes,
+    setChanges,
+    editorRef,
+  } = props;
 
-    useEffect(() => {
-        async function getMedia() {
-            try {
-                const videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                console.log("my media stream: ", videoStream)
-                setStream(videoStream)
-
-                //start the local video 
-                if (localVideoRef.current) {
-                    localVideoRef.current.srcObject = videoStream
-                }
-            } catch (err) {
-                console.error("Error accessing media devices:", err);
-            }
-        }
-
-        getMedia();
-    }, []);
-
-    useEffect(() => {
-
-
-        function setupCall() {
-            console.log("setting up call")
-            console.log(stream)
-            const newPeer = new Peer({
-                host: 'devroulette.com',
-                path: '/myapp',
-                secure: true
-            }); // Create a new Peer instance
-
-            newPeer.on('open', (id) => {
-                setPeerId(id); // Set the peer ID when the peer is opened
-                console.log('My peer ID is:', id);
-            });
-
-            // Handle incoming connections
-            newPeer.on('connection', (conn) => {
-                setConnection(conn);
-                conn.on('data', (data) => {
-                    setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
-                });
-            });
-
-            newPeer.on('call', (call: MediaConnection) => {
-                console.log("----------- call incoming! - ------------")
-                if (stream) {
-                    console.log("---------- answering with my stream---------------")
-                    call.answer(stream); // Answer the call with your media stream (if you want to send your stream)
-                }
-                else {
-                    console.log("---------- no stream yet to reply with-----------------")
-                }
-                call.on('stream', (remoteStream) => {
-                    // Properly set the remote stream for the video element
-                    console.log("-------- stream recieved: =>: ", remoteStream)
-                    if (remoteVideoRef.current) {
-                        if (remoteVideoRef.current.srcObject) {
-
-                            remoteVideoRef.current.srcObject = remoteStream; // This should be a MediaStream
-                        }
-                    }
-                });
-            });
-
-            setPeer(newPeer); // Set the peer instance to state
-
-            // Cleanup on component unmount
-            return () => {
-                newPeer.destroy(); // Destroy the peer when the component is unmounted
-            };
-        }
-
-        setupCall()
-    }, [stream])
-
-    if (!peer) {
-        return "loading"
+  useEffect(() => {
+    if (processing.current) {
+      return;
     }
 
-    const connectToPeer = (otherPeerId: string) => {
-        const conn = peer.connect(otherPeerId);
-        setConnection(conn);
-        conn.on('open', () => {
-            console.log('Connected to peer:', otherPeerId);
-            conn.on('data', (data) => {
-                setMessages((prevMessages) => [...prevMessages, data as unknown as string]); // Update messages on receiving data
-            });
+    if (dataConn && changes.length > 0) {
+      processing.current = true;
+      const [firstChange, ...restOfChanges] = changes;
+      dataConn.send(firstChange);
+      setChanges(restOfChanges);
+      processing.current = false;
+    }
+  }, [changes]);
+
+  useEffect(() => {
+    function setupCall() {
+      console.log("inside setupcall");
+      const newPeer = new Peer({
+        host: "devroulette.com",
+        path: "/myapp",
+        secure: true,
+        config: {
+          iceServers: [
+            {
+              urls: "stun:stun.relay.metered.ca:80",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:80",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:80?transport=tcp",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:443",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+            {
+              urls: "turns:global.relay.metered.ca:443?transport=tcp",
+              username: "769714b823ddd9f98f95239e",
+              credential: "aJVT5OtRSvp9Jg46",
+            },
+          ],
+        },
+      }); // Create a new Peer instance
+
+      //TODO check for symmetrical NAT
+
+      newPeer.on("open", async (id) => {
+        console.log("Opened new peer");
+        setPeerId(id); // Set the peer ID when the peer is opened
+      });
+
+      // Handle incoming data connection (for code updates)
+      newPeer.on("connection", (conn) => {
+        console.log("Data connection established for code sync");
+        conn.on("data", (data: unknown) => {
+          const change = data as ChangeObject;
+          applyChange(editorRef, change);
         });
-    };
 
-    const sendMessage = (message: string) => {
-        if (connection) {
-            connection.send(message); // Send the message through the established connection
-            setMessages((prevMessages) => [...prevMessages, message]); // Update messages to include the sent message
-        }
-    };
-
-    const callPeer = (peerId: string) => {
-        console.log("----------- calling peer ----------------")
-        if (stream) {
-            const call = peer.call(peerId, stream);
-            call.on('stream', (remoteStream) => {
-                console.log("--------- answer in form of stream ----------------")
-                if (remoteVideoRef.current) {
-                    remoteVideoRef.current.srcObject = remoteStream; // Set remote video source
-                }
+        conn.on("open", () => {
+          if (first.current) {
+            conn.send({
+              from: {
+                line: 0,
+                ch: 0,
+                sticky: null,
+                xRel: -1,
+                outside: -1,
+              },
+              to: {
+                line: 0,
+                ch: 0,
+                sticky: "before",
+                xRel: 28.662506103515625,
+              },
+              text: codeRef.current.code,
+              removed: "",
+              origin: "remote",
             });
-        }
+          }
+        });
 
+        setDataConn(conn);
+        setPairId(conn.peer);
+      });
+
+      newPeer.on("close", () => {
+        newPeer.destroy();
+      });
+
+      setPeer(newPeer); // Set the peer instance to state
+      console.log("new peer set");
+      // Cleanup on component unmount
+      return newPeer;
+    }
+
+    const newPeer = setupCall();
+
+    return () => {
+      console.log("cleaning up peer");
+      newPeer.destroy(); // Destroy the peer when the component is unmounte
     };
+  }, []);
 
-    return (
-        <div>
-            <h1>Peer ID: {peerId}</h1>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Connect to peer ID"
-                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') {
-                            const target = e.target as HTMLInputElement
-                            connectToPeer(target.value);
-                            target.value = ''; // Clear the input
-                        }
-                    }}
-                />
-            </div>
-            <div>
-                <h2>Messages:</h2>
-                <ul>
-                    {messages.map((msg, index) => (
-                        <li key={index}>{msg}</li>
-                    ))}
-                </ul>
-            </div>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Type a message"
-                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') {
-                            const target = e.target as HTMLInputElement
-                            sendMessage(target.value);
-                            target.value = ''; // Clear the input
-                        }
-                    }}
-                />
-            </div>
-            <video ref={localVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
-            <video ref={remoteVideoRef} autoPlay playsInline style={{ width: '300px', height: 'auto', border: '1px solid black' }} />
-            <input
-                type="text"
-                placeholder="video to peer ID"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === 'Enter') {
-                        const target = e.target as HTMLInputElement
-                        callPeer(target.value);
-                        target.value = ''; // Clear the input
-                    }
-                }}
-            />
+  useEffect(() => {
+    if (!peer || !peerId || !username) {
+      return;
+    }
+    console.log("checking pair server");
+    async function checkPairServer(peerId: string, username: string) {
+      try {
+        const response = await axios.post("https://devroulette.com/pair", {
+          peerId: peerId,
+          username: username,
+        });
+        const data = response.data;
+        if (data.message == "You're first in line") {
+          first.current = true;
+          console.log("first");
+          initializeCode(editorRef);
+        } else if (data.message == "You've been matched") {
+          console.log("youve been matcheds");
+          setPairId(data.pairId);
+          setPairUsername(data.pairUsername);
+        }
+        return data;
+      } catch (err) {
+        console.log(err);
+        //TODO add error message
+      }
+    }
+
+    checkPairServer(peerId, username);
+  }, [peerId, username]);
+
+  useEffect(() => {
+    if (!pairId) {
+      return;
+    }
+    createDataConnection(pairId);
+    // TODO
+  }, [pairId]);
+
+  function createDataConnection(peerId: string) {
+    if (peer) {
+      const dataConn = peer.connect(peerId);
+      dataConn.on("data", (data) => {
+        const changes = data as ChangeObject;
+        applyChange(editorRef, changes);
+      });
+      setDataConn(dataConn);
+    }
+  }
+
+  function next() {
+    window.location.reload();
+  }
+
+  return (
+    <div className="peerchat">
+      <div className="users">
+        <h3 className="users__heading">Current Users: </h3>
+        <div className="online-user">
+          <span className="online-user__status"></span>
+          <span className="online-user__username">{username}</span>
         </div>
-    );
+        <div className="online-user">
+          <span
+            className={
+              pairUsername
+                ? "online-user__status"
+                : "online-user__status online-user__status--offline"
+            }
+          ></span>
+          <span className="online-user__username">
+            {pairUsername ? pairUsername : "looking for partner"}
+          </span>
+        </div>
+      </div>
+
+      <ProjectSuggestion />
+
+      <button onClick={next} className="next-dev">
+        Next Dev
+      </button>
+    </div>
+  );
 };
 
 export default PeerChat;

@@ -1,0 +1,14 @@
+@use "../../styles/partials/variables.scss" as *;
+
+.code-editor {
+    display: flex;
+    min-height: calc(100vh);
+}
+
+.react-codemirror2 {
+    width: 100%;
+}
+
+.CodeMirror {
+    height: 100vh;
+}
