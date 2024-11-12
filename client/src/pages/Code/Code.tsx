@@ -67,7 +67,6 @@ export function Code(props: CodeProps) {
           </div>
         </Panel>
       </PanelGroup>
-      ;
     </main>
   );
 }

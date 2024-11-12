@@ -45,7 +45,7 @@ const PeerChat = (props: PeerChatProps) => {
       const newPeer = new Peer({
         host: "devroulette.com",
         path: "/myapp",
-        secure: true,
+        // secure: true,
         config: {
           iceServers: [
             { url: "stun:stun.l.google.com:19302" }, // A commonly used free STUN server
