@@ -45,11 +45,19 @@ const PeerChat = (props: PeerChatProps) => {
       const newPeer = new Peer({
         host: "devroulette.com",
         path: "/myapp",
-        // secure: true,
+        secure: true,
         config: {
           iceServers: [
             { url: "stun:stun.l.google.com:19302" },
-            { url: 'turn:143.110.223.15:3478', username:"dev", credential: 'roulette' }
+            {
+              urls: [
+                "turn:143.110.223.15:3478",
+                "turn:143.110.223.15:3478?transport=tcp",
+                "turns:143.110.223.15:5349",
+              ],
+              username: "dev",
+              credential: "roulette",
+            },
           ],
         },
       }); // Create a new Peer instance
@@ -170,8 +178,6 @@ const PeerChat = (props: PeerChatProps) => {
 
   return (
     <div className="peerchat">
-
-
       <div className="users">
         <h3 className="users__heading">Current Users: </h3>
         <div className="online-user">
