@@ -214,6 +214,7 @@ export function Code(props: CodeProps) {
             <PeerChat
               peerId={peerId}
               username={username}
+              pairUsername={pairUsername}
             />
           </div>
         </Panel>

@@ -1,13 +1,12 @@
-import { useState } from "react";
 import "./PeerChat.scss";
 import { ProjectSuggestion } from "../ProjectSuggestion/ProjectSuggestion";
 import { PeerChatProps } from "../../interface";
 
 const PeerChat = (props: PeerChatProps) => {
-  const [pairUsername, setPairUsername] = useState<string | null>(null);
 
   const {
     username,
+    pairUsername
   } = props;
 
   function next() {

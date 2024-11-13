@@ -39,4 +39,5 @@ export interface ChangeObject {
 export interface PeerChatProps {
     peerId: string,
     username: string | null
+    pairUsername: string | null
 }
