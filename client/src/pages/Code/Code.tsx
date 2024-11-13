@@ -193,10 +193,10 @@ export function Code(props: CodeProps) {
   return (
     <main className="code">
       <PanelGroup autoSaveId="example" direction="horizontal">
-        <Panel>
+        <Panel  style={{overflow: "hidden"}}>
           <Iframe code={code} codeTrigger={codeTrigger} />
         </Panel>
-        <PanelResizeHandle />
+        <PanelResizeHandle/>
         <Panel>
           <div className="editor">
             <CodeEditor
@@ -208,7 +208,7 @@ export function Code(props: CodeProps) {
             />
           </div>
         </Panel>
-        <PanelResizeHandle style={{ width: "2px", backgroundColor: "black" }} />
+        <PanelResizeHandle/>
         <Panel defaultSize={25}>
           <div className="chat">
             <PeerChat
