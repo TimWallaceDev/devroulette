@@ -8,7 +8,7 @@ import { CodeEditorProps } from '../../interface';
 import { ChangeObject } from '../../interface';
 
 const CodeEditor = (props: CodeEditorProps) => {
-    const { codeRef, setCodeTrigger, setChanges, editorRef } = props
+    const { codeRef, setCodeTrigger, editorRef, dataConn } = props
 
 
     const getChangeSet = (change: ChangeObject) => {
@@ -40,7 +40,7 @@ const CodeEditor = (props: CodeEditorProps) => {
                     value;
                     if (data.origin !== 'remote') {
                         const changes = getChangeSet(data) as ChangeObject;
-                        setChanges(prev => [...prev, changes])
+                        dataConn?.send(changes)
                     }
                     codeRef.current = {author: "me", code: value}
                     setCodeTrigger(prev => !prev)
