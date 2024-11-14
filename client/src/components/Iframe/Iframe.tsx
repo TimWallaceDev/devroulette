@@ -1,4 +1,4 @@
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { CodeData } from "../../interface";
 import { SandpackPreview, SandpackProvider } from "@codesandbox/sandpack-react";
 import "./Iframe.scss";
@@ -30,19 +30,18 @@ export function Iframe(props: IframeProps) {
     }
   }, [codeTrigger, iFrame]);
 
-
   if (safeMode) {
     return (
       <SandpackProvider
         template="static"
         files={{ "/index.html": code.current.code }}
         options={{
-            recompileMode: "immediate",
-            recompileDelay: 0,
-          }}
+          recompileMode: "immediate",
+          recompileDelay: 0,
+        }}
       >
         <SandpackPreview
-          style={{ height: "100vh", border: "1px solid purple"}}
+          style={{ height: "100vh", border: "1px solid purple" }}
           showNavigator={false}
           showRefreshButton={false}
         />

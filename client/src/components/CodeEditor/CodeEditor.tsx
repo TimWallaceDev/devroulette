@@ -40,7 +40,7 @@ const CodeEditor = (props: CodeEditorProps) => {
                     value;
                     if (data.origin !== 'remote') {
                         const changes = getChangeSet(data) as ChangeObject;
-                        dataConn?.send(changes)
+                        dataConn?.send({type: "change", change: changes})
                     }
                     codeRef.current = {author: "me", code: value}
                     setCodeTrigger(prev => !prev)

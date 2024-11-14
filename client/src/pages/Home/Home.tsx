@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./Home.scss";
-import { signInWithGoogle } from "../../functions/signInWithGoogle";
+import { signInWithGoogle } from "../../utils/signInWithGoogle";
 import { HomeProps } from "../../interface";
 import { useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
