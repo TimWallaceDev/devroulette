@@ -38,21 +38,27 @@ app.post("/pair", (req, res) => {
     //get the Peer id
     let peerId;
     let username
+
     try {
         peerId = req.body.peerId
         username = req.body.username
-        console.log("peerId server found is: ", peerId)
     }catch(err){
         console.log("no peer id found")
         res.status(400).json({message: "no peer id or no username found in request to pairing server"})
     }
-    if (queue.length === 0 ){
+
+    if (queue.length > 0 ){
         queue.push({peerId, username})
         res.status(202).json({message: "You're first in line"})
     }
     else {
-        const pair = queue.pop()
-        res.status(200).json({message: "You've been matched", pairId: pair.peerId, pairUsername: pair.username})
+        if (queue[0].peerId !== peerId){
+            const pair = queue.pop()
+            res.status(200).json({message: "You've been matched", pairId: pair.peerId, pairUsername: pair.username})
+        }
+        else {
+            res.status(202).json({message: "You're first in line"})
+        }
     }
 })
 

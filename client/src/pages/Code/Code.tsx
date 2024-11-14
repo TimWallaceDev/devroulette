@@ -13,13 +13,12 @@ import axios from "axios";
 import { initializeCode } from "../../utils/initializeCode.ts";
 
 export function Code(props: CodeProps) {
-
   const [peer, setPeer] = useState<Peer | null>(null);
   const [pairId, setPairId] = useState<string | null>(null);
   const [pairUsername, setPairUsername] = useState<string | null>(null);
   const [dataConn, setDataConn] = useState<DataConnection | null>(null);
   const first = useRef(false);
-  
+
   const [peerId, setPeerId] = useState("");
 
   const code = useRef<CodeData>({ author: "default", code: "" });
@@ -45,8 +44,12 @@ export function Code(props: CodeProps) {
   }, []);
 
   useEffect(() => {
+
+    if (!username){
+      return
+    }
+
     function setupCall() {
-      console.log("inside setupcall");
       const newPeer = new Peer({
         host: "devroulette.com",
         path: "/myapp",
@@ -79,43 +82,51 @@ export function Code(props: CodeProps) {
             },
           ],
         },
-      }); // Create a new Peer instance
+      });
 
       //TODO check for symmetrical NAT
 
       newPeer.on("open", async (id) => {
-        console.log("Opened new peer");
-        setPeerId(id); // Set the peer ID when the peer is opened
+        setPeerId(id);
       });
 
       // Handle incoming data connection (for code updates)
       newPeer.on("connection", (conn) => {
-        console.log("Data connection established for code sync");
-        conn.on("data", (data: unknown) => {
-          const change = data as ChangeObject;
-          applyChange(editorRef, change);
+        conn.on("data", (data: any) => {
+          if (data.type === "change") {
+            const change = data.change as ChangeObject;
+            applyChange(editorRef, change);
+          } else if (data.type === "username") {
+            setPairUsername(data.username);
+          }
         });
 
         conn.on("open", () => {
           if (first.current) {
             conn.send({
-              from: {
-                line: 0,
-                ch: 0,
-                sticky: null,
-                xRel: -1,
-                outside: -1,
+              type: "change",
+              change: {
+                from: {
+                  line: 0,
+                  ch: 0,
+                  sticky: null,
+                  xRel: -1,
+                  outside: -1,
+                },
+                to: {
+                  line: 0,
+                  ch: 0,
+                  sticky: "before",
+                  xRel: 28.662506103515625,
+                },
+                text: code.current.code,
+                removed: "",
+                origin: "remote",
               },
-              to: {
-                line: 0,
-                ch: 0,
-                sticky: "before",
-                xRel: 28.662506103515625,
-              },
-              text: code.current.code,
-              removed: "",
-              origin: "remote",
             });
+          }
+          else {
+            conn.send({ type: "username", username: username });
           }
         });
 
@@ -127,25 +138,21 @@ export function Code(props: CodeProps) {
         newPeer.destroy();
       });
 
-      setPeer(newPeer); // Set the peer instance to state
-      console.log("new peer set");
-      // Cleanup on component unmount
+      setPeer(newPeer);
       return newPeer;
     }
 
     const newPeer = setupCall();
 
     return () => {
-      console.log("cleaning up peer");
       newPeer.destroy();
     };
-  }, []);
+  }, [username]);
 
   useEffect(() => {
     if (!peer || !peerId || !username) {
       return;
     }
-    console.log("checking pair server");
     async function checkPairServer(peerId: string, username: string) {
       try {
         const response = await axios.post("https://devroulette.com/pair", {
@@ -158,7 +165,6 @@ export function Code(props: CodeProps) {
           console.log("first");
           initializeCode(editorRef);
         } else if (data.message == "You've been matched") {
-          console.log("youve been matcheds");
           setPairId(data.pairId);
           setPairUsername(data.pairUsername);
         }
@@ -172,6 +178,7 @@ export function Code(props: CodeProps) {
     checkPairServer(peerId, username);
   }, [peerId, username]);
 
+  //call the other peer
   useEffect(() => {
     if (!pairId) {
       return;
@@ -182,9 +189,13 @@ export function Code(props: CodeProps) {
   function createDataConnection(peerId: string) {
     if (peer) {
       const dataConn = peer.connect(peerId);
-      dataConn.on("data", (data) => {
-        const changes = data as ChangeObject;
-        applyChange(editorRef, changes);
+      dataConn.on("data", (data: any) => {
+        if (data.type === "change") {
+          const change = data.change as ChangeObject;
+          applyChange(editorRef, change);
+        } else if (data.type === "username") {
+          setPairUsername(data.username);
+        }
       });
       setDataConn(dataConn);
     }
@@ -193,10 +204,10 @@ export function Code(props: CodeProps) {
   return (
     <main className="code">
       <PanelGroup autoSaveId="example" direction="horizontal">
-        <Panel  style={{overflow: "hidden"}}>
+        <Panel style={{ overflow: "hidden" }}>
           <Iframe code={code} codeTrigger={codeTrigger} />
         </Panel>
-        <PanelResizeHandle/>
+        <PanelResizeHandle />
         <Panel>
           <div className="editor">
             <CodeEditor
@@ -208,7 +219,7 @@ export function Code(props: CodeProps) {
             />
           </div>
         </Panel>
-        <PanelResizeHandle/>
+        <PanelResizeHandle />
         <Panel defaultSize={25}>
           <div className="chat">
             <PeerChat
