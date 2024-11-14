@@ -204,7 +204,7 @@ export function Code(props: CodeProps) {
   return (
     <main className="code">
       <PanelGroup autoSaveId="example" direction="horizontal">
-        <Panel style={{ overflow: "hidden" }}>
+        <Panel>
           <Iframe code={code} codeTrigger={codeTrigger} />
         </Panel>
         <PanelResizeHandle />

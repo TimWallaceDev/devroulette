@@ -1,41 +1,61 @@
 import { applyChange } from "./applyChanges";
 
 export function initializeCode(editor: any) {
-  const initialCode = `<html lang="en">
-    <head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Document</title>
-        <style>
-        
-            ::-webkit-scrollbar {
-            width: 10px;
-            }
-    
-            ::-webkit-scrollbar-thumb {
-            background-color: #888;
+  const initialCode = `
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>DevRoulette Playground</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 4rem;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .tip {
+            background: #2d2d2d;
+            padding: 1rem;
             border-radius: 8px;
-            }
-    
-            ::-webkit-scrollbar-track {
-            background-color: black
-            }
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding: 4rem;
-                box-sizing: border-box;
-                text-align: center;
-                background-color: rgb(50,50,50);
-                color: white;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Welcome to DevRoulette!</h1>
-        <p>Edit the code here to get started!</p>
-    </body>
-    </html>`;
+            margin-top: 2rem;
+        }
+
+        code {
+            color: #61dafb;
+            background: #2d2d2d;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Let's Code Together!</h1>
+        <p>This is your shared workspace. Try editing the HTML, CSS, or add some JavaScript!</p>
+        <div class="tip">
+            <p>Quick tip: Add <code>&lt;script&gt;</code> tags to include JavaScript</p>
+        </div>
+    </div>
+</body>
+</html>
+  `;
 
   const initialChange = {
     from: {

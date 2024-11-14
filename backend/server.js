@@ -47,7 +47,7 @@ app.post("/pair", (req, res) => {
         res.status(400).json({message: "no peer id or no username found in request to pairing server"})
     }
 
-    if (queue.length > 0 ){
+    if (queue.length === 0 ){
         queue.push({peerId, username})
         res.status(202).json({message: "You're first in line"})
     }
