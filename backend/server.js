@@ -38,22 +38,49 @@ app.post("/pair", (req, res) => {
     //get the Peer id
     let peerId;
     let username
+    let email
+
     try {
         peerId = req.body.peerId
         username = req.body.username
-        console.log("peerId server found is: ", peerId)
+        email = req.body.email
     }catch(err){
         console.log("no peer id found")
         res.status(400).json({message: "no peer id or no username found in request to pairing server"})
     }
+
     if (queue.length === 0 ){
-        queue.push({peerId, username})
+        queue.push({peerId, username, email})
         res.status(202).json({message: "You're first in line"})
     }
     else {
-        const pair = queue.pop()
-        res.status(200).json({message: "You've been matched", pairId: pair.peerId, pairUsername: pair.username})
+        if (queue[0].email !== email){
+            const pair = queue.pop()
+            res.status(200).json({message: "You've been matched", pairId: pair.peerId, pairUsername: pair.username})
+        }
+        else {
+            res.status(202).json({message: "You're first in line"})
+            queue.pop()
+            queue.push({peerId, username, email})
+        }
     }
+})
+
+app.post("/disconnect", (req, res) => {
+    let peerId;
+
+    try {
+        peerId = req.body.peerId
+    }catch(err){
+        console.log("no peer id found")
+        res.status(400).json({message: "no peer id found in request to pairing server"})
+    }
+
+    if (queue[0].peerId !== peerId){
+        const pair = queue.pop()
+        res.status(200).json({message: "You've been removed from the queue"})
+    }
+
 })
 
 app.listen(PORT, () => {

@@ -1,36 +1,58 @@
-import { useEffect } from "react";
-import { CodeData } from "../../interface"
-import "./Iframe.scss"
+import { useEffect, useState } from "react";
+import { CodeData } from "../../interface";
+import { SandpackPreview, SandpackProvider } from "@codesandbox/sandpack-react";
+import "./Iframe.scss";
 
 interface IframeProps {
-    code: React.MutableRefObject<CodeData>,
-    codeTrigger: boolean
+  code: React.MutableRefObject<CodeData>;
+  codeTrigger: boolean;
 }
 
-export function Iframe(props:IframeProps){
+export function Iframe(props: IframeProps) {
+  const safeMode = true;
+  const { code } = props;
+  
+  // Only use state for initial loading
+  const [isInitialized, setIsInitialized] = useState(false);
 
-    const { code, codeTrigger } = props
-    const iFrame = document.querySelector('.iframe') as HTMLIFrameElement
+  useEffect(() => {
+    // Mark as initialized after first render
+    if (!isInitialized && code.current.code) {
+      setIsInitialized(true);
+    }
+  }, [code.current.code, isInitialized]);
 
-    useEffect(() => {
-
-        // iFrame.srcdoc = code.code
-        if (iFrame && iFrame.contentWindow) {
-
-            iFrame.style.opacity = "0"; // Hide iframe during update
-            const iframeDocument = iFrame.contentDocument || iFrame.contentWindow.document;
-
-            iframeDocument.open();
-            iframeDocument.write(code.current.code);
-            iframeDocument.close();
-
-            // Fade the iframe back in after the update
-            iFrame.style.opacity = "1";
-        }
-    }, [codeTrigger, iFrame])
+  if (safeMode) {
+    // Don't render until we have initial code
+    if (!isInitialized && !code.current.code) {
+      return null;
+    }
 
     return (
-        <iframe className="iframe" title="Code Output" />
-    )
-    
+      <SandpackProvider
+        template="static"
+        files={{ "/index.html": code.current.code }}
+        options={{
+          recompileMode: "immediate",
+          recompileDelay: 0,
+        }}
+      >
+        <SandpackPreview
+          style={{ height: "100vh", border: "1px solid purple" }}
+          showNavigator={false}
+          showRefreshButton={true}
+        />
+      </SandpackProvider>
+    );
+  }
+
+  return (
+    <>
+      <iframe
+        className="iframe"
+        title="Code Output"
+        sandbox="allow-same-origin allow-scripts"
+      />
+    </>
+  );
 }
