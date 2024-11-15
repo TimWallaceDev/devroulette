@@ -86,8 +86,6 @@ export function Code(props: CodeProps) {
         },
       });
 
-      //TODO check for symmetrical NAT
-
       newPeer.on("open", async (id) => {
         setPeerId(id);
       });
@@ -149,7 +147,7 @@ export function Code(props: CodeProps) {
     return () => {
       newPeer.destroy();
     };
-  }, [username]);
+  }, [username, email]);
 
   useEffect(() => {
     if (!peer || !peerId || !username || !email) {
@@ -179,7 +177,7 @@ export function Code(props: CodeProps) {
     }
 
     checkPairServer(peerId, username, email);
-  }, [peerId, username]);
+  }, [peerId, username, email]);
 
   //call the other peer
   useEffect(() => {
