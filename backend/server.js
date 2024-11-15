@@ -66,6 +66,23 @@ app.post("/pair", (req, res) => {
     }
 })
 
+app.post("/disconnect", (req, res) => {
+    let peerId;
+
+    try {
+        peerId = req.body.peerId
+    }catch(err){
+        console.log("no peer id found")
+        res.status(400).json({message: "no peer id found in request to pairing server"})
+    }
+
+    if (queue[0].peerId !== peerId){
+        const pair = queue.pop()
+        res.status(200).json({message: "You've been removed from the queue"})
+    }
+
+})
+
 app.listen(PORT, () => {
     console.log("Pairing server is running on http://localhost:", PORT)
 })

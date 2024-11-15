@@ -145,6 +145,14 @@ export function Code(props: CodeProps) {
     const newPeer = setupCall();
 
     return () => {
+      try {
+        axios.post("https://devroulette.com/disconnect", {
+          peerId: peerId,
+        });
+      }
+      catch(err){
+        console.log(err)
+      }
       newPeer.destroy();
     };
   }, [username, email]);
