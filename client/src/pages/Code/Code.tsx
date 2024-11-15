@@ -213,7 +213,18 @@ export function Code(props: CodeProps) {
           setPairUsername(data.username);
         }
       });
+
+      dataConn.on('open', () => {
+        console.log('Data connection opened successfully');
+        // Perform any additional setup or logic when the connection is established
+      });
       setDataConn(dataConn);
+      setTimeout(() => {
+        console.log("testing connection")
+        if (!dataConn.open){
+          window.location.reload()
+        }
+      }, 5000)
     }
   }
 
