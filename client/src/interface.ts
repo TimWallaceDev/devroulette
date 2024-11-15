@@ -2,11 +2,14 @@ import { DataConnection } from "peerjs";
 
 export interface HomeProps{
     setUsername: React.Dispatch<React.SetStateAction<string | null>>
+    setEmail: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export interface CodeProps{
     username: string | null,
-    setUsername: React.Dispatch<React.SetStateAction<string | null>>
+    setUsername: React.Dispatch<React.SetStateAction<string | null>>,
+    email: string | null,
+    setEmail: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export interface ChangeObject {

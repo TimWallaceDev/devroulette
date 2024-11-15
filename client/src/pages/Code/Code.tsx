@@ -25,7 +25,7 @@ export function Code(props: CodeProps) {
   const [codeTrigger, setCodeTrigger] = useState<boolean>(false);
   const editorRef = useRef<any>();
 
-  const { username, setUsername } = props;
+  const { username, setUsername, email, setEmail } = props;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,8 +33,10 @@ export function Code(props: CodeProps) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user?.displayName) {
         setUsername(user.displayName);
+        setEmail(user.email)
       } else {
         setUsername("");
+        setEmail("")
         navigate("/");
       }
     });
@@ -45,7 +47,7 @@ export function Code(props: CodeProps) {
 
   useEffect(() => {
 
-    if (!username){
+    if (!username || !email){
       return
     }
 
@@ -150,14 +152,15 @@ export function Code(props: CodeProps) {
   }, [username]);
 
   useEffect(() => {
-    if (!peer || !peerId || !username) {
+    if (!peer || !peerId || !username || !email) {
       return;
     }
-    async function checkPairServer(peerId: string, username: string) {
+    async function checkPairServer(peerId: string, username: string, email: string) {
       try {
         const response = await axios.post("https://devroulette.com/pair", {
           peerId: peerId,
           username: username,
+          email: email
         });
         const data = response.data;
         if (data.message == "You're first in line") {
@@ -171,11 +174,11 @@ export function Code(props: CodeProps) {
         return data;
       } catch (err) {
         console.log(err);
-        //TODO add error message
+        navigate("/")
       }
     }
 
-    checkPairServer(peerId, username);
+    checkPairServer(peerId, username, email);
   }, [peerId, username]);
 
   //call the other peer
