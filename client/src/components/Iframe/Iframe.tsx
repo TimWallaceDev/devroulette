@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CodeData } from "../../interface";
 import { SandpackPreview, SandpackProvider } from "@codesandbox/sandpack-react";
 import "./Iframe.scss";
@@ -9,28 +9,25 @@ interface IframeProps {
 }
 
 export function Iframe(props: IframeProps) {
-  const safeMode = false;
-
-  const { code, codeTrigger } = props;
-  const iFrame = document.querySelector(".iframe") as HTMLIFrameElement;
+  const safeMode = true;
+  const { code } = props;
+  
+  // Only use state for initial loading
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // iFrame.srcdoc = code.code
-    if (iFrame && iFrame.contentWindow) {
-      iFrame.style.opacity = "0"; // Hide iframe during update
-      const iframeDocument =
-        iFrame.contentDocument || iFrame.contentWindow.document;
-
-      iframeDocument.open();
-      iframeDocument.write(code.current.code);
-      iframeDocument.close();
-
-      // Fade the iframe back in after the update
-      iFrame.style.opacity = "1";
+    // Mark as initialized after first render
+    if (!isInitialized && code.current.code) {
+      setIsInitialized(true);
     }
-  }, [codeTrigger, iFrame]);
+  }, [code.current.code, isInitialized]);
 
   if (safeMode) {
+    // Don't render until we have initial code
+    if (!isInitialized && !code.current.code) {
+      return null;
+    }
+
     return (
       <SandpackProvider
         template="static"
@@ -43,7 +40,7 @@ export function Iframe(props: IframeProps) {
         <SandpackPreview
           style={{ height: "100vh", border: "1px solid purple" }}
           showNavigator={false}
-          showRefreshButton={false}
+          showRefreshButton={true}
         />
       </SandpackProvider>
     );
