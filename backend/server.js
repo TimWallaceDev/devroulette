@@ -60,6 +60,8 @@ app.post("/pair", (req, res) => {
         }
         else {
             res.status(202).json({message: "You're first in line"})
+            queue.pop()
+            queue.push({peerId, username, email})
         }
     }
 })
