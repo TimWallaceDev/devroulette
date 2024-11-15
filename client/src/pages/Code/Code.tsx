@@ -198,6 +198,13 @@ export function Code(props: CodeProps) {
   function createDataConnection(peerId: string) {
     if (peer) {
       const dataConn = peer.connect(peerId);
+
+      dataConn.on('error', (err) => {
+        console.error('Connection error:', err);
+        // Notify the user and remove the peer from the queue on the server
+        console.log(err)
+        window.location.reload()
+      });
       dataConn.on("data", (data: any) => {
         if (data.type === "change") {
           const change = data.change as ChangeObject;
